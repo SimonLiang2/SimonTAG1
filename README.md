@@ -7,4 +7,6 @@
 ### Cycle 1: 
 
 #### Deliver a single player, top down, experience where the player can move through a randomly generated map with a limited field-of-view.
-- bp 1
+
+#### Week 1-
+- Implement a flash-light 
