@@ -21,4 +21,4 @@
 - When the round timer reaches zero if the player is "it" they are sent back to the main menu
 - When the round timer reaches zero if the player is not "it" a new map and "npc" are generated
 - When a new map is generated the player is set as "it" again and the "npc" is not it 
-
+- In the game feedback is given for who is currently "it"
