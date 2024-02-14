@@ -6,7 +6,7 @@
 ## CYCLES
 ### Cycle 1: 
 
-#### The player can move through a randomly generated map with their limited field-of-view.
+#### The player can move through a randomly generated map with their limited field-of-view in search of an NPC.
 
 #### Objectives
 - The player will be able to see only in the direction of the mouse with interferance of objects
