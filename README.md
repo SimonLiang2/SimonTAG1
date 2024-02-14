@@ -14,3 +14,5 @@
 - The player will spawn into a randomly generated map
 - The game will open up to a main menu screen with a button that transitions to game play 
 - The main menu button will give feedback when clicked
+
+Additionaly
