@@ -15,4 +15,4 @@
 - The game will open up to a main menu screen with a button that transitions to game play 
 - The main menu button will give feedback when clicked
 
-Additionaly
+Additionally we would like to incorporate a round timer that will regenerate the map and respawn the player in a new position
