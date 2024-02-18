@@ -1,6 +1,7 @@
 class GameState:
     def __init__(self,name):
         self.name = name
+        self.state_machine = None
         return
     
     def enter(self):

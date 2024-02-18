@@ -6,6 +6,7 @@ class StateMachine:
 
     def add_state(self,state):
         if(state.name not in self.states):
+            state.state_machine = self
             self.states[state.name] = state
         return
     
