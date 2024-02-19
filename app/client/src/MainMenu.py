@@ -14,6 +14,16 @@ class MainMenu:
     def leave(self):
         print(f"Leaving: {self.name}")
     
+    def play_pressed(self):
+        print("PLAY GAME")
+    
+    def credits_pressed(self):
+        print("CREDITS")
+    
+    def quit_pressed(self):
+        print("QUIT GAME")
+
+
     def render(self,window=None):
         color = (0, 0, 0)
         window.fill(color)
@@ -21,9 +31,9 @@ class MainMenu:
 
         window.blit(self.create_logo("TAG"), (200,50))
         
-        play_button = MenuButton("Play", "")
-        credits_button = MenuButton("Credits", "")
-        quit_button = MenuButton("Quit", "")
+        play_button = MenuButton("Play", "", self.play_pressed)
+        credits_button = MenuButton("Credits", "", self.credits_pressed)
+        quit_button = MenuButton("Quit", "", self.quit_pressed)
         self.buttons = [play_button, credits_button, quit_button]
 
         y = 200
@@ -33,7 +43,6 @@ class MainMenu:
             else: 
                 window.blit(button.create_button(), (200,y))
             y+=50
-
 
     def create_logo(self, text):
         font = pygame.font.SysFont("Arial", 32)
@@ -59,3 +68,5 @@ class MainMenu:
                         self.active_button_idx += 1
                     else:
                         self.active_button_idx = 0
+                elif key == pygame.K_RETURN:
+                    self.buttons[self.active_button_idx].pressed()

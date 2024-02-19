@@ -1,12 +1,14 @@
 import pygame
 
 class MenuButton:
-    def __init__(self, name, image_path):
+    def __init__(self, name, image_path, pressed_func):
         self.name = name
         self.image = image_path
+        self.pressed_func = pressed_func
 
     def pressed(self):
-        pass
+        print(f"{self.name} has been pressed")
+        self.pressed_func()
 
     def create_button(self, active=False):
         font = pygame.font.SysFont("Arial", 32)
