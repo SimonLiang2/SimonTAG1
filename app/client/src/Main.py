@@ -9,7 +9,7 @@ menu_state = MainMenu("menu")
 state_machine.add_state(game_state)
 state_machine.add_state(menu_state)
 
-state_machine.transition("game")
+state_machine.transition("menu")
 
 while not state_machine.window_should_close:
     state_machine.current_state.update()
