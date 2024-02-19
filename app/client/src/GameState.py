@@ -1,3 +1,4 @@
+import pygame
 class GameState:
     def __init__(self,name):
         self.name = name
@@ -13,7 +14,12 @@ class GameState:
         return
     
     def render(self,window=None):
+        color = (255, 0, 0)
+        window.fill(color)
         pass
 
     def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.state_machine.window_should_close = True
         pass
