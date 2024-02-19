@@ -1,11 +1,17 @@
+import pygame
 class StateMachine:
     def __init__(self):
         self.states = {}
         self.current_state = None
+        self.window_should_close = False
+        pygame.init()
+        self.window = pygame.display.set_mode((600, 600))
+        pygame.display.set_caption("Tag Game")
         return
 
     def add_state(self,state):
         if(state.name not in self.states):
+            state.state_machine = self
             self.states[state.name] = state
         return
     
