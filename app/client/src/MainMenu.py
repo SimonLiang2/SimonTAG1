@@ -11,7 +11,7 @@ class MainMenu:
 
         self.menu_music_filepath = 'app/client/src/music/menu.mp3'
         self.button_select_filepath = 'app/client/src/music/button-select.mp3'
-        self.enter_key_filepath = 'app/client/src/music/entr-key.mp3'
+        self.enter_key_filepath = 'app/client/src/music/enter-key.mp3'
     
     def enter(self):
 
@@ -40,20 +40,20 @@ class MainMenu:
     
     # User has selected the play button
     def play_pressed(self):
-        pygame.mixer.stop()
         self.state_machine.transition("game")
-        print("PLAY GAME")
+        pygame.mixer.stop()
+        print("PLAY PRESSED")
 
     # User has selected the credits button
     def credits_pressed(self):
         self.state_machine.transition("credits")
-        print("CREDITS")
+        print("CREDITS PRESSED")
     
     # User has selected the quit button
     def quit_pressed(self):
         # Send signal to state machine to close window
         self.state_machine.window_should_close = True
-        print("QUIT GAME")
+        print("QUIT PRESSED")
 
 
     def render(self,window=None):
