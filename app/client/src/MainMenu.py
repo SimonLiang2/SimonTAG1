@@ -68,7 +68,7 @@ class MainMenu:
         credits_button = MenuButton("Credits", "", self.credits_pressed)
         quit_button = MenuButton("Quit", "", self.quit_pressed)
 
-        # Keep track of all the buttons publically using a list
+        # Keep track of all the buttons publicly using a list
         self.buttons = [play_button, credits_button, quit_button]
 
         # Draw each button to the window
