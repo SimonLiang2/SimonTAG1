@@ -23,7 +23,7 @@ class MainMenu:
         credits_filepath = 'app/client/src/assets/images/credits.png'
         quit_filepath = 'app/client/src/assets/images/quit.png'
 
-        # Create buttons
+        # Instantiate buttons
         button_scale = .35
         self.play_button = MenuButton("Play", self.play_pressed, image_path=play_filepath, scale=button_scale)
         self.credits_button = MenuButton("Credits",self.credits_pressed, image_path=credits_filepath, scale=button_scale)
