@@ -1,4 +1,5 @@
 import pygame
+import time
 from MenuButton import MenuButton
 
 class MainMenu:
@@ -9,6 +10,19 @@ class MainMenu:
         self.buttons = []
     
     def enter(self):
+
+        # Play music
+        pygame.mixer.init()
+        pygame.mixer.music.load('app/client/src/music/menu.mp3')
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(loops=-1)
+
+        self.button_selected_sound = pygame.mixer.Sound('app/client/src/music/button-select.mp3')
+        self.button_selected_sound.set_volume(0.6)
+
+        self.enter_sound = pygame.mixer.Sound('app/client/src/music/enter-key.mp3')
+        self.enter_sound.set_volume(1)
+
         print(f"Entering: {self.name}")
     
     def leave(self):
@@ -16,9 +30,10 @@ class MainMenu:
     
     # User has selected the play button
     def play_pressed(self):
+        pygame.mixer.stop()
         self.state_machine.transition("game")
         print("PLAY GAME")
-    
+
     # User has selected the credits button
     def credits_pressed(self):
         self.state_machine.transition("credits")
@@ -73,17 +88,21 @@ class MainMenu:
             elif event.type == pygame.KEYDOWN:
                 key = event.key
                 if key == pygame.K_UP:
+                    self.button_selected_sound.play()
                     if self.active_button_idx > 0:
                         self.active_button_idx -= 1
                     else:
                         self.active_button_idx = len(self.buttons) -1
                 elif key == pygame.K_DOWN:
+                    self.button_selected_sound.play()
                     if len(self.buttons) - 1 > self.active_button_idx:
                         self.active_button_idx += 1
                     else:
                         self.active_button_idx = 0
                 # On enter key pressed -> press the active button
                 elif key == pygame.K_RETURN:
+                    self.enter_sound.play()
+                    time.sleep(0.1) # give the enter_sound time to finish
                     self.buttons[self.active_button_idx].pressed()
                 elif key == pygame.K_ESCAPE:
                     self.state_machine.window_should_close = True
