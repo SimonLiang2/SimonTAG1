@@ -9,13 +9,15 @@ class MainMenu:
         self.active_button_idx = 0
         self.buttons = []
 
+        # Background color
         self.window_color = (0, 0, 0)
 
-        # Music locations
+        # Music filepaths
         self.menu_music_filepath = 'app/client/src/assets/music/menu.mp3'
         self.button_select_filepath = 'app/client/src/assets/music/button-select.mp3'
         self.enter_key_filepath = 'app/client/src/assets/music/enter-key.mp3'
 
+        # Button filepaths
         play_filepath = 'app/client/src/assets/images/play.png'
         credits_filepath = 'app/client/src/assets/images/credits.png'
         quit_filepath = 'app/client/src/assets/images/quit.png'
