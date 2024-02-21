@@ -134,3 +134,21 @@ class MainMenu:
                     self.quit_sound.play()
                     time.sleep(0.4) # give the enter_sound time to finish
                     self.state_machine.window_should_close = True
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                self.quit_sound.play()
+                time.sleep(0.5)
+                if (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 254) and (pos[1] <= 317):
+                    print("Play Button")
+                    self.active_button_idx = 0
+                    self.buttons[self.active_button_idx].pressed()
+                elif (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 333) and (pos[1] <= 385):
+                    print("Credits Button")
+                    self.active_button_idx = 1
+                    self.buttons[self.active_button_idx].pressed()
+                elif (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 409) and (pos[1] <= 464):
+                    print("Quit Button")
+                    self.active_button_idx = 2
+                    self.buttons[self.active_button_idx].pressed()
+                print(f"Mouseclick: {pos}")
