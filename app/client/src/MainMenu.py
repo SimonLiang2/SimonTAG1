@@ -9,6 +9,9 @@ class MainMenu:
         self.active_button_idx = 0
         self.buttons = []
 
+        self.last_input_method = 'keyboard'
+        self.last_mouse_pos = pygame.mouse.get_pos()
+
         # Background color
         self.window_color = (0, 0, 0)
 
@@ -102,53 +105,72 @@ class MainMenu:
         return logo
 
     def update(self):
+        current_mouse_pos = pygame.mouse.get_pos()
+
+        # Check if the mouse has moved since the last frame
+        if self.last_mouse_pos != current_mouse_pos:
+            self.last_input_method = 'mouse'
+        self.last_mouse_pos = current_mouse_pos  # Update the last mouse position for the next frame
+
+        # Update active button index based on mouse position only if the last input was from the mouse
+        if self.last_input_method == 'mouse':
+            if (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 254) and (current_mouse_pos[1] <= 317):
+                self.active_button_idx = 0
+            elif (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 333) and (current_mouse_pos[1] <= 385):
+                self.active_button_idx = 1
+            elif (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 409) and (current_mouse_pos[1] <= 464):
+                self.active_button_idx = 2
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
             
-            # Handle key events
-            # Up & Down keys change the active button index
+            # Handle keyboard inputs
             elif event.type == pygame.KEYDOWN:
+                self.last_input_method = 'keyboard'  # Update last input method to keyboard on key press
                 key = event.key
                 if key == pygame.K_UP:
                     self.button_selected_sound.play()
                     if self.active_button_idx > 0:
                         self.active_button_idx -= 1
                     else:
-                        self.active_button_idx = len(self.buttons) -1
+                        self.active_button_idx = len(self.buttons) - 1
                 elif key == pygame.K_DOWN:
                     self.button_selected_sound.play()
-                    if len(self.buttons) - 1 > self.active_button_idx:
+                    if self.active_button_idx < len(self.buttons) - 1:
                         self.active_button_idx += 1
                     else:
                         self.active_button_idx = 0
-                # On enter key pressed -> press the active button
                 elif key == pygame.K_RETURN:
-                    if self.active_button_idx < len(self.buttons) - 1:
-                        self.enter_sound.play()
-                    else:
+                    if self.active_button_idx == len(self.buttons) - 1:
                         self.quit_sound.play()
-                    time.sleep(0.4) # give the enter_sound time to finish
+                    else:
+                        self.enter_sound.play()
+                    time.sleep(0.4)  # Give the sound time to finish
                     self.buttons[self.active_button_idx].pressed()
                 elif key == pygame.K_ESCAPE:
                     self.quit_sound.play()
-                    time.sleep(0.4) # give the enter_sound time to finish
+                    time.sleep(0.4)  # Give the sound time to finish
                     self.state_machine.window_should_close = True
 
+            # Handle mouse button clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
+                self.last_input_method = 'mouse'  # Update last input method to mouse on click
                 self.quit_sound.play()
-                time.sleep(0.5)
+                time.sleep(0.5)  # Give the sound time to finish
+                pos = pygame.mouse.get_pos()
+                
+                # Check if the click is within the bounds of the buttons and act accordingly
+
+                
                 if (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 254) and (pos[1] <= 317):
-                    print("Play Button")
                     self.active_button_idx = 0
                     self.buttons[self.active_button_idx].pressed()
                 elif (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 333) and (pos[1] <= 385):
-                    print("Credits Button")
                     self.active_button_idx = 1
                     self.buttons[self.active_button_idx].pressed()
                 elif (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 409) and (pos[1] <= 464):
-                    print("Quit Button")
                     self.active_button_idx = 2
                     self.buttons[self.active_button_idx].pressed()
-                print(f"Mouseclick: {pos}")
+
+                print(f"Mouseclick at: {pos}")
