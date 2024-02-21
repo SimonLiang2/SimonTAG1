@@ -14,13 +14,18 @@ class MainMenu:
     def leave(self):
         print(f"Leaving: {self.name}")
     
+    # User has selected the play button
     def play_pressed(self):
         print("PLAY GAME")
     
+    # User has selected the credits button
     def credits_pressed(self):
         print("CREDITS")
     
+    # User has selected the quit button
     def quit_pressed(self):
+        # Send signal to state machine to close window
+        self.state_machine.window_should_close = True
         print("QUIT GAME")
 
 
@@ -28,22 +33,28 @@ class MainMenu:
         color = (0, 0, 0)
         window.fill(color)
 
-
+        # Add the logo to the window
         window.blit(self.create_logo("TAG"), (200,50))
         
+        # Add each button to the window
         play_button = MenuButton("Play", "", self.play_pressed)
         credits_button = MenuButton("Credits", "", self.credits_pressed)
         quit_button = MenuButton("Quit", "", self.quit_pressed)
+
+        # Keep track of all the buttons publically using a list
         self.buttons = [play_button, credits_button, quit_button]
 
-        y = 200
+        # Draw each button to the window
+        # If the button is active(active_button_idx) then set active=True
+        button_x,button_y = 200,200
         for i,button in enumerate(self.buttons):
             if i == self.active_button_idx:
-                window.blit(button.create_button(active=True), (200,y))
+                window.blit(button.create_button(active=True), (button_x,button_y))
             else: 
-                window.blit(button.create_button(), (200,y))
-            y+=50
+                window.blit(button.create_button(), (button_x,button_y))
+            button_y+=50 # Just so they all don't place on top of each other
 
+    # Creates and returns a title logo
     def create_logo(self, text):
         font = pygame.font.SysFont("Arial", 32)
 
@@ -54,10 +65,11 @@ class MainMenu:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
+            
+            # Handle key events
+            # Up & Down keys change the active button index
             elif event.type == pygame.KEYDOWN:
-
                 key = event.key
-
                 if key == pygame.K_UP:
                     if self.active_button_idx > 0:
                         self.active_button_idx -= 1
@@ -68,5 +80,6 @@ class MainMenu:
                         self.active_button_idx += 1
                     else:
                         self.active_button_idx = 0
+                # On enter key pressed -> press the active button
                 elif key == pygame.K_RETURN:
                     self.buttons[self.active_button_idx].pressed()
