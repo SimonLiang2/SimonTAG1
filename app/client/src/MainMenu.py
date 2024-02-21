@@ -9,22 +9,30 @@ class MainMenu:
         self.active_button_idx = 0
         self.buttons = []
 
-        self.menu_music_filepath = 'app/client/src/music/menu.mp3'
-        self.button_select_filepath = 'app/client/src/music/button-select.mp3'
-        self.enter_key_filepath = 'app/client/src/music/enter-key.mp3'
+        self.window_color = (0, 0, 0)
+
+        # Music locations
+        self.menu_music_filepath = 'app/client/src/assets/music/menu.mp3'
+        self.button_select_filepath = 'app/client/src/assets/music/button-select.mp3'
+        self.enter_key_filepath = 'app/client/src/assets/music/enter-key.mp3'
+
+        play_filepath = 'app/client/src/assets/images/play.png'
+        credits_filepath = 'app/client/src/assets/images/credits.png'
+        quit_filepath = 'app/client/src/assets/images/quit.png'
 
         # Create buttons
-        self.play_button = MenuButton("Play", "", self.play_pressed)
-        self.credits_button = MenuButton("Credits", "", self.credits_pressed)
-        self.quit_button = MenuButton("Quit", "", self.quit_pressed)
+        button_scale = .35
+        self.play_button = MenuButton("Play", self.play_pressed, image_path=play_filepath, scale=button_scale)
+        self.credits_button = MenuButton("Credits",self.credits_pressed, image_path=credits_filepath, scale=button_scale)
+        self.quit_button = MenuButton("Quit", self.quit_pressed, image_path=quit_filepath, scale=button_scale)
 
         # Keep track of all the buttons publicly using a list
         self.buttons = [self.play_button, self.credits_button, self.quit_button]
 
-        self.logo = self.create_logo("TAG")
+        logo_path = 'app/client/src/assets/images/logo.png'
+        self.logo = self.create_logo(logo_path, rescale=.4)
     
     def enter(self):
-
         # Catch any exceptions when trying to load audio
         try:
             # Play music
@@ -66,27 +74,25 @@ class MainMenu:
         print("QUIT PRESSED")
 
     def render(self,window=None):
-        color = (0, 0, 0)
-        window.fill(color)
+        window.fill(self.window_color)
 
         # Add the logo to the window
-        window.blit(self.logo, (250,50))
+        window.blit(self.logo, (160,50))
         
         # Blit each button to the window
         # If the button is active(active_button_idx) then set active=True
-        button_x,button_y = 250,200
+        button_x,button_y = 175,250
         for i,button in enumerate(self.buttons):
             if i == self.active_button_idx:
                 window.blit(button.create_button(active=True), (button_x,button_y))
             else: 
                 window.blit(button.create_button(), (button_x,button_y))
-            button_y+=50 # So they all don't get placed on top of each other
+            button_y+=75 # So they all don't get placed on top of each other
 
     # Creates and returns a title logo
-    def create_logo(self, text):
-        font = pygame.font.SysFont("Arial", 32)
-
-        logo = font.render(text, True, (255, 0, 0))
+    def create_logo(self, image_path, rescale=1):
+        logo = pygame.image.load(image_path)
+        logo = pygame.transform.scale(logo, (logo.get_width() * rescale, logo.get_height() * rescale))
         return logo
 
     def update(self):
