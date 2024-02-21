@@ -16,10 +16,12 @@ class MainMenu:
     
     # User has selected the play button
     def play_pressed(self):
+        self.state_machine.transition("game")
         print("PLAY GAME")
     
     # User has selected the credits button
     def credits_pressed(self):
+        self.state_machine.transition("credits")
         print("CREDITS")
     
     # User has selected the quit button
@@ -83,3 +85,5 @@ class MainMenu:
                 # On enter key pressed -> press the active button
                 elif key == pygame.K_RETURN:
                     self.buttons[self.active_button_idx].pressed()
+                elif key == pygame.K_ESCAPE:
+                    self.state_machine.window_should_close = True
