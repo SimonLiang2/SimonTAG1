@@ -8,20 +8,30 @@ class MainMenu:
         self.state_machine = None
         self.active_button_idx = 0
         self.buttons = []
+
+        self.menu_music_filepath = 'app/client/src/music/menu.mp3'
+        self.button_select_filepath = 'app/client/src/music/button-select.mp3'
+        self.enter_key_filepath = 'app/client/src/music/entr-key.mp3'
     
     def enter(self):
 
-        # Play music
-        pygame.mixer.init()
-        pygame.mixer.music.load('app/client/src/music/menu.mp3')
-        pygame.mixer.music.set_volume(0.5)
-        pygame.mixer.music.play(loops=-1)
+        # Catch any exceptions when trying to load audio
+        try:
+            # Play music
+            pygame.mixer.init()
+            pygame.mixer.music.load(self.menu_music_filepath)
+            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.play(loops=-1)
 
-        self.button_selected_sound = pygame.mixer.Sound('app/client/src/music/button-select.mp3')
-        self.button_selected_sound.set_volume(0.6)
+            self.button_selected_sound = pygame.mixer.Sound(self.button_select_filepath)
+            self.button_selected_sound.set_volume(0.6)
 
-        self.enter_sound = pygame.mixer.Sound('app/client/src/music/enter-key.mp3')
-        self.enter_sound.set_volume(1)
+            self.enter_sound = pygame.mixer.Sound(self.enter_key_filepath)
+            self.enter_sound.set_volume(1)
+        except FileNotFoundError as no_file_e:
+            print(f"File Not Found Error: {no_file_e}")
+        except Exception as exception:
+            print(f"Exception caught: {exception}")
 
         print(f"Entering: {self.name}")
     
