@@ -86,7 +86,7 @@ class MainMenu:
         window.blit(self.logo, (157,50))
         
         # Blit each button to the window
-        # If the button is active(active_button_idx) then set active=True
+        # If the button is active(active_button_idx) then set active =True
         button_x,button_y = 175,250
         for i,button in enumerate(self.buttons):
             if i == self.active_button_idx:
