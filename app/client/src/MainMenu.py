@@ -12,10 +12,11 @@ class MainMenu:
         # Background color
         self.window_color = (0, 0, 0)
 
-        # Music filepaths
+        # Audio filepaths
         self.menu_music_filepath = 'app/client/src/assets/music/menu.mp3'
         self.button_select_filepath = 'app/client/src/assets/music/button-select.mp3'
         self.enter_key_filepath = 'app/client/src/assets/music/enter-key.mp3'
+        self.quit_sound_filepath = 'app/client/src/assets/music/quit.mp3'
 
         # Button filepaths
         play_filepath = 'app/client/src/assets/images/play.png'
@@ -48,6 +49,9 @@ class MainMenu:
 
             self.enter_sound = pygame.mixer.Sound(self.enter_key_filepath)
             self.enter_sound.set_volume(1)
+
+            self.quit_sound = pygame.mixer.Sound(self.quit_sound_filepath)
+            self.quit_sound.set_volume(1)
         except FileNotFoundError as no_file_e:
             print(f"File Not Found Error: {no_file_e}")
         except Exception as exception:
@@ -79,7 +83,7 @@ class MainMenu:
         window.fill(self.window_color)
 
         # Add the logo to the window
-        window.blit(self.logo, (160,50))
+        window.blit(self.logo, (157,50))
         
         # Blit each button to the window
         # If the button is active(active_button_idx) then set active=True
@@ -120,8 +124,13 @@ class MainMenu:
                         self.active_button_idx = 0
                 # On enter key pressed -> press the active button
                 elif key == pygame.K_RETURN:
-                    self.enter_sound.play()
-                    time.sleep(0.1) # give the enter_sound time to finish
+                    if self.active_button_idx < len(self.buttons) - 1:
+                        self.enter_sound.play()
+                    else:
+                        self.quit_sound.play()
+                    time.sleep(0.4) # give the enter_sound time to finish
                     self.buttons[self.active_button_idx].pressed()
                 elif key == pygame.K_ESCAPE:
+                    self.quit_sound.play()
+                    time.sleep(0.4) # give the enter_sound time to finish
                     self.state_machine.window_should_close = True
