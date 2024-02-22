@@ -36,7 +36,11 @@ class MainMenu:
         self.buttons = [self.play_button, self.credits_button, self.quit_button]
 
         logo_path = 'app/client/src/assets/images/logo.png'
-        self.logo = self.create_logo(logo_path, rescale=.4)
+        self.logo = self.create_image(logo_path, rescale=.4)
+
+        self.settings_inverted_path = 'app/client/src/assets/images/settings-inverted.png'
+        self.settings_path = 'app/client/src/assets/images/settings.png'
+        self.settings = self.create_image(self.settings_path, rescale=.07)
     
     def enter(self):
         # Catch any exceptions when trying to load audio
@@ -67,6 +71,7 @@ class MainMenu:
     
     # User has selected the play button
     def play_pressed(self):
+        time.sleep(0.4)
         self.state_machine.transition("game")
         pygame.mixer.stop()
         print("PLAY PRESSED")
@@ -78,7 +83,8 @@ class MainMenu:
     
     # User has selected the quit button
     def quit_pressed(self):
-        # Send signal to the state machine to close window
+        # Send signal to the state machine to close windows
+        time.sleep(0.4)
         self.state_machine.window_should_close = True
         print("QUIT PRESSED")
 
@@ -88,6 +94,9 @@ class MainMenu:
         # Add the logo to the window
         window.blit(self.logo, (157,50))
         
+        # Add settings icon to window
+        window.blit(self.settings, (20,525))
+
         # Blit each button to the window
         # If the button is active(active_button_idx) then set active=True
         button_x,button_y = 175,250
@@ -99,13 +108,18 @@ class MainMenu:
             button_y+=75 # So they all don't get placed on top of each other
 
     # Creates and returns a title logo
-    def create_logo(self, image_path, rescale=1):
-        logo = pygame.image.load(image_path)
-        logo = pygame.transform.scale(logo, (logo.get_width() * rescale, logo.get_height() * rescale))
-        return logo
+    def create_image(self, image_path, rescale=1):
+        image = pygame.image.load(image_path)
+        image = pygame.transform.scale(image, (image.get_width() * rescale, image.get_height() * rescale))
+        return image
 
     def update(self):
         current_mouse_pos = pygame.mouse.get_pos()
+
+        if (current_mouse_pos[0] >= 19 and current_mouse_pos[0] <= 78) and (current_mouse_pos[1] >= 525 and current_mouse_pos[0] <= 586):
+            self.settings = self.create_image(self.settings_inverted_path, rescale=.07)
+        else:
+            self.settings = self.create_image(self.settings_path, rescale=.07)
 
         # Check if the mouse has moved since the last frame
         if self.last_mouse_pos != current_mouse_pos:
@@ -157,20 +171,20 @@ class MainMenu:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.last_input_method = 'mouse'  # Update last input method to mouse on click
                 self.quit_sound.play()
-                time.sleep(0.5)  # Give the sound time to finish
-                pos = pygame.mouse.get_pos()
+                #time.sleep(0.5)  # Give the sound time to finish
+                click_pos = pygame.mouse.get_pos()
                 
                 # Check if the click is within the bounds of the buttons and act accordingly
-
-                
-                if (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 254) and (pos[1] <= 317):
+                if (click_pos[0] >= 189) and (click_pos[0] <= 407) and (click_pos[1] >= 254) and (click_pos[1] <= 317):
                     self.active_button_idx = 0
                     self.buttons[self.active_button_idx].pressed()
-                elif (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 333) and (pos[1] <= 385):
+                elif (click_pos[0] >= 189) and (click_pos[0] <= 407) and (click_pos[1] >= 333) and (click_pos[1] <= 385):
                     self.active_button_idx = 1
                     self.buttons[self.active_button_idx].pressed()
-                elif (pos[0] >= 189) and (pos[0] <= 407) and (pos[1] >= 409) and (pos[1] <= 464):
+                elif (click_pos[0] >= 189) and (click_pos[0] <= 407) and (click_pos[1] >= 409) and (click_pos[1] <= 464):
                     self.active_button_idx = 2
                     self.buttons[self.active_button_idx].pressed()
-
-                print(f"Mouseclick at: {pos}")
+                elif (click_pos[0] >= 19 and click_pos[0] <= 78) and (click_pos[1] >= 525 and click_pos[0] <= 586):
+                    print("Settings Icon Clicked")
+                    self.state_machine.transition("settings")
+                print(f"Mouseclick at: {click_pos}")
