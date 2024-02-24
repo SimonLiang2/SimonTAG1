@@ -1,6 +1,5 @@
 import random as r
 
-
 def gen_2d_array(rows,cols):
     row = []
     for i in range (rows):
@@ -15,10 +14,12 @@ def get_col(row,col,max_row,max_col):
         return (255,255,255)
     return (0,0,0)
 
-def gen_map(rows,cols):
+def gen_map(res,width,height):
+    rows = int(height/res)
+    cols = int(width/res)
     map_data = gen_2d_array(rows,cols)
     for row in range (rows):
         for col in range (cols):
-            map_data[row][col] = get_col(row,col,rows-2,cols-2)
+            map_data[row][col] = get_col(row,col,rows-1,cols-1)
     return map_data       
     
