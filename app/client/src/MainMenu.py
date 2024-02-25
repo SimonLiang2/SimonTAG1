@@ -80,7 +80,7 @@ class MainMenu:
     def credits_pressed(self):
         self.state_machine.transition("credits")
         print("CREDITS PRESSED")
-    
+
     # User has selected the quit button
     def quit_pressed(self):
         # Send signal to the state machine to close windows
@@ -88,12 +88,18 @@ class MainMenu:
         self.state_machine.window_should_close = True
         print("QUIT PRESSED")
 
+        # Creates and returns a title logo
+    def create_image(self, image_path, rescale=1):
+        image = pygame.image.load(image_path)
+        image = pygame.transform.scale(image, (image.get_width() * rescale, image.get_height() * rescale))
+        return image
+
     def render(self,window=None):
-        window.fill(self.window_color)
+        window.fill(self.window_color)        
 
         # Add the logo to the window
         window.blit(self.logo, (157,50))
-        
+
         # Add settings icon to window
         window.blit(self.settings, (20,525))
 
@@ -107,15 +113,11 @@ class MainMenu:
                 window.blit(button.create_button(), (button_x,button_y))
             button_y+=75 # So they all don't get placed on top of each other
 
-    # Creates and returns a title logo
-    def create_image(self, image_path, rescale=1):
-        image = pygame.image.load(image_path)
-        image = pygame.transform.scale(image, (image.get_width() * rescale, image.get_height() * rescale))
-        return image
 
     def update(self):
         current_mouse_pos = pygame.mouse.get_pos()
 
+        # Hover over settings
         if (current_mouse_pos[0] >= 19 and current_mouse_pos[0] <= 78) and (current_mouse_pos[1] >= 525 and current_mouse_pos[0] <= 586):
             self.settings = self.create_image(self.settings_inverted_path, rescale=.07)
         else:
@@ -129,11 +131,16 @@ class MainMenu:
         # Update active button index based on mouse position only if the last input was from the mouse
         if self.last_input_method == 'mouse':
             if (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 254) and (current_mouse_pos[1] <= 317):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.active_button_idx = 0
             elif (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 333) and (current_mouse_pos[1] <= 385):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.active_button_idx = 1
             elif (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 409) and (current_mouse_pos[1] <= 464):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.active_button_idx = 2
+            else:
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
