@@ -41,6 +41,10 @@ class MainMenu:
         self.settings_inverted_path = 'app/client/src/assets/images/settings-inverted.png'
         self.settings_path = 'app/client/src/assets/images/settings.png'
         self.settings = self.create_image(self.settings_path, rescale=.07)
+
+        self.info_path = 'app/client/src/assets/images/infoicon.png'
+        self.info_path_inverted = 'app/client/src/assets/images/infoicon-inverted.png'
+        self.info = self.create_image(self.info_path, rescale=0.3)
     
     def enter(self):
         # Catch any exceptions when trying to load audio
@@ -100,8 +104,9 @@ class MainMenu:
         # Add the logo to the window
         window.blit(self.logo, (157,50))
 
-        # Add settings icon to window
+        # Add settings  & info icon to window
         window.blit(self.settings, (20,525))
+        window.blit(self.info, (90, 525))
 
         # Blit each button to the window
         # If the button is active(active_button_idx) then set active=True
@@ -122,6 +127,12 @@ class MainMenu:
             self.settings = self.create_image(self.settings_inverted_path, rescale=.07)
         else:
             self.settings = self.create_image(self.settings_path, rescale=.07)
+
+        if (current_mouse_pos[0] >= 100 and current_mouse_pos[0] <= 147) and (current_mouse_pos[1] >= 533 and current_mouse_pos[0] <= 588):
+            self.info = self.create_image(self.info_path_inverted, rescale=0.3)
+        else:
+            self.info = self.create_image(self.info_path, rescale=0.3)
+
 
         # Check if the mouse has moved since the last frame
         if self.last_mouse_pos != current_mouse_pos:
@@ -194,4 +205,7 @@ class MainMenu:
                 elif (click_pos[0] >= 19 and click_pos[0] <= 78) and (click_pos[1] >= 525 and click_pos[0] <= 586):
                     print("Settings Icon Clicked")
                     self.state_machine.transition("settings")
+                elif (current_mouse_pos[0] >= 100 and current_mouse_pos[0] <= 147) and (current_mouse_pos[1] >= 533 and current_mouse_pos[0] <= 588):
+                    print("Info Icon Clicked")
+                    self.state_machine.transition("info")
                 print(f"Mouseclick at: {click_pos}")
