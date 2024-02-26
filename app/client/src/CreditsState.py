@@ -9,7 +9,10 @@ class CreditsState:
         self.name = name
         self.state_machine = None
 
-        
+        # Create a clock object
+        self.clock = pygame.time.Clock()
+        self.fps = 30
+
         self.simonName = CreditName(10,10,190,50,'Simon Liang')
         self.johnnyName = CreditName(400,150,190,50, 'John Pertell')
         self.beckyName = CreditName(10,300,240,50, 'Becky Ostrander')
@@ -24,6 +27,8 @@ class CreditsState:
     def render(self,window=None):
         color = (0, 0, 0)
         window.fill(color)
+
+        self.clock.tick(self.fps)
 
         self.simonRect = self.simonName.create_name()
         self.johnnyRect = self.johnnyName.create_name()
