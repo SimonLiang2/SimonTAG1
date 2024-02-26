@@ -13,8 +13,8 @@ class CreditName:
         self.text= font.render(text, True, (255,255,255))
         
 
-        randX = random.random()/3 +1
-        randY = random.random()/3 +1
+        randX = random.random()/2 +3
+        randY = random.random()/2 +3
         randR = random.random() * 255
         randG = random.random() * 255
         randB = random.random() * 255
