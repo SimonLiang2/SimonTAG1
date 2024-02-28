@@ -12,6 +12,11 @@ def gen_2d_array(rows,cols):
 def get_col(row,col,max_row,max_col):
     if(row == 0 or col == 0 or row == max_row or col == max_col):
         return (255,255,255)
+    if(row == 15 and col < 14):
+        return (255,255,255)
+    
+    if(row == 8 and col != 14 and col != 15):
+        return (255,255,255)
     return (0,0,0)
 
 def gen_map(res,width,height):

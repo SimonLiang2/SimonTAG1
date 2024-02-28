@@ -1,13 +1,12 @@
 import pygame
 from Player import Player
 from MapStates import gen_map;
+
 class GameState:
     def __init__(self,name):
         self.name = name
         self.state_machine = None
         self.player = None
-        self.res_x = None
-        self.res_y = None
         self.map = None
         self.map_img = None
         self.box_resolution = 25
@@ -39,9 +38,8 @@ class GameState:
         window.blit(self.map_img, (0,0))
         index_x = int(self.player.x/res)
         index_y = int(self.player.y/res)
-        pygame.draw.rect(window,(255,0,0),(index_x*res,index_y*res,res,res))
+        # pygame.draw.rect(window,(255,0,0),(index_x*res,index_y*res,res,res))
         self.player.render(window)
-        pygame.display.update()
         return
 
     def update(self):
@@ -49,5 +47,5 @@ class GameState:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
-        self.player.update(keys,self.map,self.box_resolution)       
+        self.player.update(keys,self.map,self.box_resolution)   
         return

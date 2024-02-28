@@ -2,14 +2,29 @@ import pygame
 import math
 
 # Vector utilities
+vec_up = [0,-1]
+vec_down = [0,1]
+vec_left = [1,0]
+vec_right = [-1,0]
+vecs = [vec_up,vec_down,vec_left,vec_right]
+
+def add(vec_a,vec_b):
+    return [vec_a[0]+vec_b[0],vec_a[1]+vec_b[1]]
+def sub(vec_a,vec_b):
+    return [vec_a[0]-vec_b[0],vec_a[1]-vec_b[1]]
 def mag(vec):
     return math.sqrt((vec[0]*vec[0])  + (vec[1]*vec[1]))
-def  mult(vec,a):
+def mult(vec,a):
     return [vec[0]*a,vec[1]*a]
 def norm(vec):
-    return [vec[0]/mag(vec),vec[1]/mag(vec)]
+    m = mag(vec)
+    if(m == 0):
+        m = 1
+    return [vec[0]/m,vec[1]/m]
 def set_mag(vec,a):
     return mult(norm(vec),a)
+def in_range(x,y):
+    return True
 
 # Global definitions
 WALL = (255,255,255)
@@ -29,6 +44,10 @@ class Player:
     
     def render(self,window):
         pygame.draw.circle(window, self.color, (self.x,self.y),self.radius,0)
+        a = set_mag(self.velocity,self.radius*2)
+        #pygame.draw.circle(window, (255,0,0), (self.x+a[0],self.y+a[1]),self.radius,0)
+        pygame.draw.line(window,(255,0,0),(self.x,self.y),
+                                          (self.x+a[0],self.y+a[1]),1)
         return
     
     def update(self,keys,map_data,res):
@@ -60,32 +79,26 @@ class Player:
                  self.velocity[0] = 0
             if(abs(self.velocity[1]) <= 0.02): 
                  self.velocity[1] = 0
-       
-        self.position[0] += self.velocity[0]
-        self.check_collision(map_data,res,0)
-        self.position[1] += self.velocity[1]
-        self.check_collision(map_data,res,1)
-      
-    def check_collision(self,map,res,dir):
-        index_x = int(self.position[0]/res)
-        index_y = int(self.position[1]/res)
-        on = map[index_y][index_x]
 
-        if(on == WALL):
-            self.position[dir] -= self.velocity[dir] 
-            return False
+        self.position[0] += self.velocity[0] 
+        self.check_collision(map_data,res)
+
+        self.position[1] += self.velocity[1]
+        self.check_collision(map_data,res)
+        
+
+    def check_collision(self,map,res):
+        for i in range(len(vecs)):
+            t = mult(vecs[i],self.radius)
+            a = add(self.position,t)
+            index_x = int((a[0]) / res)
+            index_y = int((a[1]) / res)
+            
+            on = map[index_y][index_x]
+
+            if(on == WALL):
+                self.position = add(self.position,mult(t,-1))
+                return
+                
         
         return True      
-    
-# Show becky and then delete
-#       if keys[pygame.K_a] and (0 + self.player.radius) < self.player.x:
-        #         self.player.x -= self.player.velocity
-                
-        # if keys[pygame.K_d] and self.player.x < (600 - self.player.radius):
-        #         self.player.x += self.player.velocity
-
-        # if keys[pygame.K_w] and (0 + self.player.radius) < self.player.y:
-        #         self.player.y -= self.player.velocity
-                
-        # if keys[pygame.K_s] and self.player.y < (600 - self.player.radius):
-        #         self.player.y += self.player.velocity
