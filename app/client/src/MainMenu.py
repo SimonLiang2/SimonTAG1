@@ -54,6 +54,7 @@ class MainMenu:
             pygame.mixer.music.load(self.menu_music_filepath)
             pygame.mixer.music.set_volume(0.5)
             pygame.mixer.music.play(loops=-1)
+            
 
             self.button_selected_sound = pygame.mixer.Sound(self.button_select_filepath)
             self.button_selected_sound.set_volume(0.6)
@@ -71,13 +72,14 @@ class MainMenu:
         print(f"Entering: {self.name}")
     
     def leave(self):
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         print(f"Leaving: {self.name}")
     
     # User has selected the play button
     def play_pressed(self):
         time.sleep(0.4)
         self.state_machine.transition("game")
-        pygame.mixer.stop()
+        pygame.mixer.music.stop()
         print("PLAY PRESSED")
 
     # User has selected the credits button
