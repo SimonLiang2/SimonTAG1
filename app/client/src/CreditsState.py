@@ -37,19 +37,20 @@ class CreditsState:
 
         self.nameCollide()
 
-        self.simonName.bounce()
+        #Manages the movement of the credit names and draws the updated positions of the rectangle
+        self.simonName.bounce(self.state_machine)
         pygame.draw.rect(window, (219,165,255), self.simonName.create_name())
         self.simonName.move()
 
-        self.johnnyName.bounce()
+        self.johnnyName.bounce(self.state_machine)
         pygame.draw.rect(window, self.johnnyName.color, self.johnnyName.create_name())
         self.johnnyName.move()
 
-        self.beckyName.bounce()
+        self.beckyName.bounce(self.state_machine)
         pygame.draw.rect(window, self.beckyName.color, self.beckyName.create_name())
         self.beckyName.move()
 
-        self.noahName.bounce()
+        self.noahName.bounce(self.state_machine)
         pygame.draw.rect(window, self.noahName.color, self.noahName.create_name())
         self.noahName.move()
 
@@ -58,12 +59,12 @@ class CreditsState:
         smallfont = pygame.font.SysFont('Georgia',25)
 
         escText = font.render('Press ESC key to go back', True, (255,255,255))
-        creditText = font.render('Credits',True, (255,255,255))
+        #creditText = font.render('Credits',True, (255,255,255))
         devText = font.render('Developers', True, (255,255,255))
 
         window.blit(escText,(20,560))
-        window.blit(creditText, (250,10))
-        window.blit(devText,(220,50))
+        #window.blit(creditText, (250,10))
+        window.blit(devText,(220,10))
         window.blit(self.simonName.text,(self.simonName.rectX + 10, self.simonName.rectY+5))
         window.blit(self.johnnyName.text,(self.johnnyName.rectX +10, self.johnnyName.rectY+5))
         window.blit(self.beckyName.text,(self.beckyName.rectX+10, self.beckyName.rectY+5))
@@ -75,6 +76,8 @@ class CreditsState:
         self.johnnyName.adjustment()
         self.beckyName.adjustment()
         self.noahName.adjustment()
+
+        #If they collide, the rectangles will go the opposite direction
 
         if self.simonRect.colliderect(self.johnnyRect) or self.johnnyRect.colliderect(self.simonRect):
             
