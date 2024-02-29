@@ -61,10 +61,9 @@ class GameState:
                      end_bottom_vec = Vector((end_vector.x,end_vector.y+res))
                      if(self.get_val_from_map(x,y+1) == 0):
                         self.player.walls.append(Boundary(start_bottom_vec,end_bottom_vec))
-
                      start_vector = None
                      end_vector = None
-            # this handles whole straight lines so ill accept it
+                     
             if(start_vector != None):
                 x = int(start_vector.x / res)
                 y = int(start_vector.y / res)
@@ -128,12 +127,12 @@ class GameState:
         res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
-        window.blit(self.map_img, (0,0))
+        #window.blit(self.map_img, (0,0))
         index_x = int(self.player.x/res)
         index_y = int(self.player.y/res)
         self.player.render(window)
-        for wall in self.player.walls:
-            wall.render(window)
+        # for wall in self.player.walls:
+        #     wall.render(window)
         return
 
     def update(self):

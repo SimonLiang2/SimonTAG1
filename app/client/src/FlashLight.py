@@ -46,6 +46,6 @@ class FlashLight:
                 blend = pygame.Color(105,100,0,85)
                 blend.a = 255
                 pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),2)
-                pygame.draw.circle(window,col,(closest.x,closest.y),1)
+                pygame.draw.circle(window,col,(closest.x,closest.y),2)
                 if(circ != None):
                     pygame.draw.circle(window,col,(circ.x,circ.y),2)
