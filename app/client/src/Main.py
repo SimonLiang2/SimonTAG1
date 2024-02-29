@@ -5,6 +5,13 @@ from MainMenu import MainMenu
 from CreditsState import CreditsState
 from SettingsState import SettingsState
 from InfoState import InfoState
+import random as r
+
+valid_seeds = "app\\client\\src\\assets\\valid_seeds"
+lines = open(valid_seeds).readlines()
+seed = r.choice(lines).strip()
+r.seed(seed)
+print("Seed:", seed)
 
 state_machine = StateMachine()
 game_state = GameState("game")
