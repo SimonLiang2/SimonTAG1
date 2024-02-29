@@ -1,5 +1,11 @@
 import random as r
-r.seed(10)
+
+valid_seeds = "app\\client\\src\\assets\\valid_seeds"
+lines = open(valid_seeds).readlines()
+seed = r.choice(lines).strip()
+r.seed(seed)
+print("Seed:", seed)
+
 def gen_2d_array(rows,cols):
     row = []
     for i in range (rows):
@@ -9,7 +15,7 @@ def gen_2d_array(rows,cols):
         row.append(col)
     return row
 
-def get_bin(bin_thresh=0.2):
+def get_bin(bin_thresh=0.25):
     num = r.random()
     if num >= bin_thresh: num = 0
     else: num = 1
