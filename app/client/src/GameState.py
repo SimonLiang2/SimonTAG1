@@ -10,7 +10,7 @@ class GameState:
         self.player = None
         self.map = None
         self.map_img = None
-        self.box_resolution = 25
+        self.box_resolution = 50
         self.mouseX = 0
         self.mouseY = 0
         self.mouseB = -1
