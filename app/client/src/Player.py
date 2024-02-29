@@ -28,7 +28,7 @@ def in_range(x,y):
     return True
 
 # Global definitions
-WALL = (255,255,255)
+WALL = 1
 
 class Player:
     def __init__(self,x,y,r):

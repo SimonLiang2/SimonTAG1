@@ -15,6 +15,11 @@ def get_col(row,col,max_row,max_col):
     if(row == 15 and col < 14):
         return 1
     
+    if(row == 11 and col == 14):
+        return 1
+    if(row == 12 and col == 14):
+        return 1
+
     if(row == 8 and col != 14 and col != 15):
         return 1
     return 0

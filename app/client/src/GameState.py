@@ -23,7 +23,6 @@ class GameState:
         self.map = gen_map(self.box_resolution,self.state_machine.window_width, self.state_machine.window_height)
         self.gen_boundaries()
         self.draw_map()
-        
         return
     
     def leave(self):
@@ -34,15 +33,75 @@ class GameState:
         if((0 <= x and x <= len(self.map[0])-1) and (0 <= y and y <= len(self.map)-1)):
             return self.map[y][x]
         return None
-        
-    
+          
     def gen_boundaries(self):
-        # Draw horizontal Lines
-        for i in range(0,len(self.map)):
+        res = self.box_resolution
+        #Draw horizontal Lines
+        start_vector = None
+        end_vector = None
+        for i in range(8,9):
+            start_vector = None
             for j in range(0,len(self.map[0])):
                  val = self.get_val_from_map(j,i)
-                 if(val == 1):
-                     pass
+                 # valid Box
+                 if(val == 1 and start_vector == None):
+                    if(self.get_val_from_map(i,j-1) == 0 or self.get_val_from_map(i,j-1) == 0):
+                        start_vector = Vector(j*res,i*res)
+                        end_vector = Vector(start_vector.x+res,start_vector.y)
+                 if(val == 1 and start_vector != None):
+                     end_vector = Vector(j*res,i*res)
+                 if(val == 0 and start_vector != None):
+                     end_vector = Vector(j*res,i*res)
+                     x = int(start_vector.x / res)
+                     y = int(start_vector.y / res)
+                     if(self.get_val_from_map(x,y-1) == 0):
+                        self.player.walls.append(Boundary(start_vector,end_vector))
+
+                     start_bottom_vec = Vector((start_vector.x,start_vector.y+res))
+                     end_bottom_vec = Vector((end_vector.x,end_vector.y+res))
+                     if(self.get_val_from_map(x,y+1) == 0):
+                        self.player.walls.append(Boundary(start_bottom_vec,end_bottom_vec))
+
+                     start_vector = None
+                     end_vector = None
+            # this handles whole straight lines so ill accept it
+            if(start_vector != None):
+                self.player.walls.append(Boundary(start_vector,end_vector))
+                start_bottom_vec = Vector((start_vector.x,start_vector.y+res))
+                end_bottom_vec = Vector((end_vector.x,end_vector.y+res))
+                self.player.walls.append(Boundary(start_bottom_vec,end_bottom_vec))
+
+
+        # Draw vertical Lines
+        # start_vector = None
+        # end_vector = None
+        # for i in range(0,len(self.map[0])):
+        #     start_vector = None
+        #     for j in range(0,len(self.map)):
+        #          val = self.get_val_from_map(i,j)
+        #          if(val == 1 and start_vector == None):
+        #              start_vector = Vector(i*res,j*res)
+        #              end_vector = Vector(start_vector.x,start_vector.y-res)
+        #          if(val == 1 and start_vector != None):
+        #             end_vector = Vector(i*res,j*res)
+        #          if(val == 0 and start_vector != None):
+        #              end_vector = Vector(i*res,j*res)
+        #              x = int(start_vector.x / res)
+        #              y = int(start_vector.y / res)
+        #              if(self.get_val_from_map(x-1,y) == 0):
+        #                  self.player.walls.append(Boundary(start_vector,end_vector))
+        #              start_right_vec = Vector((start_vector.x+res,start_vector.y))
+        #              end_right_vec = Vector((end_vector.x+res,end_vector.y))
+        #              if(self.get_val_from_map(x+1,y) == 0):
+        #                 self.player.walls.append(Boundary(start_right_vec,end_right_vec))
+        #              start_vector = None
+        #              end_vector = None
+        #     if(start_vector != None):
+        #         self.player.walls.append(Boundary(start_vector,end_vector))
+        #         start_right_vec = Vector((start_vector.x+res,start_vector.y))
+        #         end_right_vec = Vector((end_vector.x+res,end_vector.y))
+        #         self.player.walls.append(Boundary(start_right_vec,end_right_vec))
+                
         return
     
     def draw_map(self):
