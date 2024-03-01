@@ -72,7 +72,7 @@ class Vector:
 
 # A simple way to represent walls or boundaries
 class Boundary:
-    def __init__(self,aVec,bVec,inpCol=(255,255,255)):
+    def __init__(self,aVec,bVec,inpCol=(255,0,0)):
         self.a = aVec
         self.b = bVec
         self.col = inpCol
