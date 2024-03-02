@@ -9,7 +9,7 @@ def gen_2d_array(rows,cols):
         row.append(col)
     return row
 
-def get_bin(bin_thresh=0.25):
+def get_bin(bin_thresh=0.1):
     num = r.random()
     if num >= bin_thresh: num = 0
     else: num = 1

@@ -2,6 +2,7 @@ import pygame
 from Player import Player
 from FlashLightUtils import Boundary,Vector
 from MapStates import gen_map;
+from CreateMaps import choose_random_map, choose_map, get_last_map
 
 class GameState:
     def __init__(self,name):
@@ -20,7 +21,9 @@ class GameState:
     def enter(self):
         print(f"Entering: {self.name}")
         self.player = Player(self.state_machine.window_width/2, self.state_machine.window_height/2,5)
-        self.map = gen_map(self.box_resolution,self.state_machine.window_width, self.state_machine.window_height)
+        self.map = choose_random_map("maps.json")
+        #self.map = choose_map("maps.json", "map_1")
+        #self.map = get_last_map("maps.json")
         self.gen_boundaries()
         self.draw_map()
         return
