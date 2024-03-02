@@ -1,6 +1,6 @@
 import pygame
 from Player import Player
-from FlashLightUtils import Boundary,Vector
+from FlashLightUtils import Boundary,Vector,Circle
 from MapStates import gen_map;
 
 class GameState:
@@ -16,6 +16,8 @@ class GameState:
         self.mouseB = -1
         self.clock = pygame.time.Clock()
         self.debug_mode = False
+        self.walls = []
+        self.objects = [Circle(10 * self.box_resolution, 3 * self.box_resolution, 5)]
         return
     
     def enter(self):
@@ -24,11 +26,12 @@ class GameState:
         self.map = gen_map(self.box_resolution,self.state_machine.window_width, self.state_machine.window_height)
         self.gen_boundaries()
         self.draw_map()
+        self.player.tagged = True
         return
     
     def leave(self):
         print(f"Leaving: {self.name}")
-        self.player.walls = []
+        self.walls = []
         return
     
     def get_val_from_map(self,x,y):
@@ -36,63 +39,45 @@ class GameState:
             return self.map[y][x]
         return None
     
-    def gen_horizontal(self,offset_check,y_offset):
+    def gen_lines(self, x_offset, y_offset, x_check, y_check):
         res = self.box_resolution
-        #Draw horizontal Lines
-        start_vector = None
-        end_vector = None
-        for y in range(0,len(self.map)):
-            start_vector = None
-            for x in range(0,len(self.map[0])):
-                 val = self.get_val_from_map(x,y)
-                 # valid Box
-                 if(val == 1 and start_vector == None):
-                    if(self.get_val_from_map(x,y+offset_check) == 0):
-                        start_vector = Vector(x*res,y*res+y_offset)
-                        end_vector = Vector(start_vector.x+res,start_vector.y)
-                 elif(val == 1 and start_vector != None):
-                     if(self.get_val_from_map(x,y+offset_check) == 0):
-                        end_vector = Vector(x*res+res,y*res+y_offset)
-                     else:
-                         self.player.walls.append(Boundary(start_vector,end_vector))
-                         start_vector = None
-                         end_vector = None
-                 elif(val == 0 and start_vector != None):
-                        self.player.walls.append(Boundary(start_vector,end_vector))
-                        start_vector = None
-                        end_vector = None  
 
-    def gen_vertical(self,offset_check,x_offset):
-        res = self.box_resolution
-        #Draw vertical Lines
-        start_vector = None
-        end_vector = None
-        for x in range(0,len(self.map[0])):
+        def create_vector(x, y, is_horizontal):
+            if is_horizontal:
+                return Vector(x * res, y * res + y_offset), Vector(x * res + res, y * res + y_offset)
+            else:
+                return Vector(x * res + x_offset, y * res), Vector(x * res + x_offset, y * res + res)
+
+        def add_wall(start_vector, end_vector):
+            self.walls.append(Boundary(start_vector, end_vector))
+
+        for y in range(len(self.map)):
             start_vector = None
-            for y in range(0,len(self.map)):
-                 val = self.get_val_from_map(x,y)
-                 # valid Box
-                 if(val != 0 and start_vector == None):
-                    if(self.get_val_from_map(x+offset_check,y) == 0):
-                        start_vector = Vector(x*res+x_offset,y*res)
-                        end_vector = Vector(start_vector.x,start_vector.y+res)
-                 elif(val != 0 and start_vector != None):
-                     if(self.get_val_from_map(x+offset_check,y) == 0):
-                        end_vector = Vector(x*res+x_offset,y*res+res)
-                     else:
-                         self.player.walls.append(Boundary(start_vector,end_vector))
-                         start_vector = None
-                         end_vector = None
-                 elif(val == 0 and start_vector != None):
-                        self.player.walls.append(Boundary(start_vector,end_vector))
+
+            for x in range(len(self.map[0])):
+                val = self.get_val_from_map(x, y)
+
+                if val != 0 and start_vector is None:
+                    if self.get_val_from_map(x + x_check, y + y_check) == 0:
+                        start_vector, end_vector = create_vector(x, y, is_horizontal=(y_check != 0))
+                elif val != 0 and start_vector is not None:
+                    if self.get_val_from_map(x + x_check, y + y_check) == 0:
+                        end_vector = create_vector(x, y, is_horizontal=(y_check != 0))[1]
+                    else:
+                        add_wall(start_vector, end_vector)
                         start_vector = None
-                        end_vector = None  
+                elif val == 0 and start_vector is not None:
+                    add_wall(start_vector, end_vector)
+                    start_vector = None
+
+            if start_vector is not None:
+                add_wall(start_vector, end_vector)
 
     def gen_boundaries(self):
-        self.gen_horizontal(1,self.box_resolution)
-        self.gen_horizontal(-1,0)
-        self.gen_vertical(1,self.box_resolution)
-        self.gen_vertical(-1,0)
+        self.gen_lines(self.box_resolution, 0, 1, 0)
+        self.gen_lines(0, 0, -1, 0)
+        self.gen_lines(0, self.box_resolution, 0, 1)
+        self.gen_lines(0, 0, 0, -1)
         return
            
     def draw_map(self):
@@ -114,10 +99,12 @@ class GameState:
             window.blit(self.map_img, (0,0))
         index_x = int(self.player.x/res)
         index_y = int(self.player.y/res)
-        self.player.render(window)
+        self.player.render(window,self.walls,self.objects)
         if(self.debug_mode):
-            for wall in self.player.walls:
+            for wall in self.walls:
                 wall.render(window)
+            for obj in self.objects:
+                obj.render(window)
         return
 
     def update(self):
