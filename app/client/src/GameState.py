@@ -23,11 +23,11 @@ class GameState:
     
     def enter(self):
         self.map = choose_random_map("maps.json")
+        #self.map = choose_map("maps.json", "map_1")
+        #self.map = get_last_map("maps.json")
         print(f"Entering: {self.name}")
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
-        #self.map = choose_map("maps.json", "map_1")
-        #self.map = get_last_map("maps.json")
         self.gen_boundaries()
         self.draw_map()
         self.player.tagged = True
