@@ -1,7 +1,5 @@
 import pygame
 
-
-
 class NPC:
     def __init__(self,x,y,r):
         self.x = x
