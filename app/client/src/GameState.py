@@ -1,7 +1,7 @@
 import pygame
 from Player import Player
 from FlashLightUtils import Boundary,Vector,Circle
-from MapStates import gen_map;
+from MapStates import gen_map, find_spawn_point;
 from CreateMaps import choose_random_map, choose_map, get_last_map
 
 class GameState:
@@ -22,9 +22,10 @@ class GameState:
         return
     
     def enter(self):
-        print(f"Entering: {self.name}")
-        self.player = Player(self.state_machine.window_width/2, self.state_machine.window_height/2,5)
         self.map = choose_random_map("maps.json")
+        print(f"Entering: {self.name}")
+        valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
+        self.player = Player(valid_x, valid_y,5)
         #self.map = choose_map("maps.json", "map_1")
         #self.map = get_last_map("maps.json")
         self.gen_boundaries()

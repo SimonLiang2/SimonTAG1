@@ -20,6 +20,23 @@ def get_col(row,col,max_row,max_col):
         return 1
     return get_bin()
 
+def find_spawn_point(map_data, res):
+    max_rows = len(map_data)
+    max_cols = len(map_data[0])
+    while True:
+        row = r.randint(1, max_rows - 3)
+        col = r.randint(1, max_cols - 3)
+        valid_spawn = True
+        for i in range(row, row + 3):
+            for j in range(col, col + 3):
+                if map_data[i][j] != 0:
+                    valid_spawn = False
+                    break
+            if not valid_spawn:
+                break 
+        if valid_spawn:
+            return (col + 1) * res, (row + 1) * res
+
 def gen_map(res,width,height):
     rows = int(height/res)
     cols = int(width/res)
