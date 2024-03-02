@@ -24,14 +24,13 @@ def norm(vec):
     return [vec[0]/m,vec[1]/m]
 def set_mag(vec,a):
     return mult(norm(vec),a)
-def in_range(x,y):
-    return True
 
 # Global definitions
 WALL = 1
 
 class Player:
     def __init__(self,x,y,r):
+        self.tagged = False
         self.x = x
         self.y = y
         self.position = [x,y]
@@ -43,18 +42,20 @@ class Player:
         self.friction_mag = 0.5
         self.flash_light = FlashLight(x,y,0.02)
         self.mouseDown = False
-        self.walls = []
         return
     
-    def render(self,window):
+    def render(self,window,walls,objects):
         
         if(self.mouseDown):
-            self.flash_light.flash(window,self.walls)
-        
+            self.flash_light.flash(window,walls,objects)
+
+        self.color = (0,0,255)
+        if(self.tagged):
+            self.color = (255,255,0)
         pygame.draw.circle(window, self.color, (self.x,self.y),self.radius,0)
-        # a = set_mag(self.velocity,self.radius*2)
-        # pygame.draw.line(window,(255,0,0),(self.x,self.y),
-        #                                   (self.x+a[0],self.y+a[1]),1)
+        a = set_mag(self.velocity,self.radius*2)
+        pygame.draw.line(window,(255,0,0),(self.x,self.y),
+                                          (self.x+a[0],self.y+a[1]),1)
         return
     
     def update(self,keys,mouse,map_data,res):
@@ -63,9 +64,10 @@ class Player:
         dy = mouse[1] - (self.position[1])
         theta = math.atan2(dy,dx)
 
-        self.flash_light.update(self.position[0],self.position[1],theta)  
-
         self.mouseDown = mouse[2][0]
+
+        if(self.mouseDown):
+            self.flash_light.update(self.position[0],self.position[1],theta)  
     
         wasd = [keys[pygame.K_w],keys[pygame.K_a],keys[pygame.K_s],keys[pygame.K_d]]
         self.process_movement(wasd,map_data,res)
@@ -106,7 +108,7 @@ class Player:
 
     def check_collision(self,map,res):
         for i in range(len(vecs)):
-            t = mult(vecs[i],self.radius)
+            t = mult(vecs[i],self.radius-2)
             a = add(self.position,t)
             index_x = int((a[0]) / res)
             index_y = int((a[1]) / res)

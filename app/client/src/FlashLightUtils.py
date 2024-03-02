@@ -70,18 +70,26 @@ class Vector:
         if(m>0):
             self.mul(m)
 
+#simple circle
+class Circle:
+    def __init__(self,x,y,radius,col=(255,0,255)):
+        self.pos = Vector(x,y)
+        self.radius = radius
+        self.color = col
+    
+    def render(self,window):
+        pygame.draw.circle(window,self.color,(self.pos.x,self.pos.y),self.radius)
+
+
 # A simple way to represent walls or boundaries
 class Boundary:
     def __init__(self,aVec,bVec,inpCol=(255,0,0)):
         self.a = aVec
         self.b = bVec
-        self.col = inpCol
+        self.color = inpCol
     
     def render(self,window):
-        pygame.draw.line(window,self.col,(self.a.x,self.a.y),(self.b.x,self.b.y))
-
-
-
+        pygame.draw.line(window,self.color,(self.a.x,self.a.y),(self.b.x,self.b.y))
 
 # Simple Raycaster
 def length(x,y):
@@ -136,13 +144,13 @@ class Ray:
          py = y1
 
          for i in range(0,CAST_SEARCH_LIMIT,1):
-             d = self.signedDstToCircle(px,py,circle.pos.x,circle.pos.y,circle.diameter)
+             d = self.signedDstToCircle(px,py,circle.pos.x,circle.pos.y,circle.radius*2)
              if(d <= 0):
                  pt1 = Vector(px,py)
                  pt2 = self.reverse_cast_circle(px,py,circle)
                  return [pt1,pt2]
-             px += dx
-             py += dy
+             px += dx 
+             py += dy 
          return  
     
     def reverse_cast_circle(self,px,py,circle):
@@ -153,7 +161,7 @@ class Ray:
              dx = x2 - x1
              dy = y2 - y1
              for i in range(0,CAST_SEARCH_LIMIT,1):
-                    d = self.signedDstToCircle(px,py,circle.pos.x,circle.pos.y,circle.diameter)
+                    d = self.signedDstToCircle(px,py,circle.pos.x,circle.pos.y,circle.radius*2)
                     if(d >= 0):
                         pt1 = Vector(px,py)
                         return pt1
