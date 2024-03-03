@@ -44,7 +44,7 @@ class FlashLight:
                         col = wall.color
             if(objs != None):
                         for obj in objs:
-                            c = obj
+                            c = Circle(obj.x,obj.y,obj.radius,obj.color)
                             pt = ray.cast_circle(c)
                             if(pt):
                                 dist = Vector.dist(self.pos,pt[0])
@@ -56,15 +56,17 @@ class FlashLight:
 
             if (closest):
                 line_size = 4
-                circle_size = 2
+                circle_size = 3
                 #color of the flashlight
                 blend = pygame.Color(105,100,0,85)
                 blend.a = 255
                 if(circ != None):
                     circle_size = 2
-                    line_size = 2
+                    line_size = 4
+                    pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
                     pygame.draw.circle(window,col,(circ.x,circ.y),circle_size)
-
-                pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
+                
+                if(circ == None):
+                    pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
                 pygame.draw.circle(window,col,(closest.x,closest.y),circle_size)
                 
