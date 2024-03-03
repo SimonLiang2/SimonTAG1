@@ -1,4 +1,5 @@
 import pygame
+from FlashLight import FlashLight
 
 class NPC:
     def __init__(self,x,y,r):
@@ -11,12 +12,17 @@ class NPC:
         return
     
     def render(self,window):
+        self.color = (255,255,255)
+        if (self.tagged):
+            self.color = (219,165,255)
+        
+        self.collide = pygame.Rect(self.x,self.y,self.radius,self.radius)
+
         pygame.draw.circle(window, self.color, (self.x,self.y),self.radius,0)
         return
     
-    def update(self,tagger_collision_check):
-        if (tagger_collision_check):
-            self.tagged = True
+    def update(self):
+        
 
         self.x = self.position[0]
         self.y = self.position[1]

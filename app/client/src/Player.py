@@ -52,6 +52,7 @@ class Player:
         self.color = (0,0,255)
         if(self.tagged):
             self.color = (255,255,0)
+        self.collide = pygame.Rect(self.x,self.y,self.radius,self.radius)
         pygame.draw.circle(window, self.color, (self.x,self.y),self.radius,0)
         a = set_mag(self.velocity,self.radius*2)
         pygame.draw.line(window,(255,0,0),(self.x,self.y),
