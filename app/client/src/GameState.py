@@ -20,6 +20,7 @@ class GameState:
         self.mouseB = -1
         self.clock = pygame.time.Clock()
         self.debug_mode = False
+        self.score = 0
         self.walls = []
         self.objects = []
         return
@@ -35,10 +36,12 @@ class GameState:
         self.draw_map()
         self.player.tagged = True
         self.npc.tagged = False
+        self.score+=1
         return
 
 
     def enter(self):
+        self.score = 0
         self.map = choose_random_map("maps.json")
         #self.map = choose_map("maps.json", "map_1")
         #self.map = get_last_map("maps.json")
