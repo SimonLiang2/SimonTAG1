@@ -79,7 +79,7 @@ class MainMenu:
     def play_pressed(self):
         time.sleep(0.4)
         self.state_machine.transition("game")
-        pygame.mixer.music.stop()
+        #pygame.mixer.music.stop()
         print("PLAY PRESSED")
 
     # User has selected the credits button

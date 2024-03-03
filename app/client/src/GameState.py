@@ -7,6 +7,10 @@ from CreateMaps import choose_random_map, choose_map, get_last_map
 
 class GameState:
     def __init__(self,name):
+        self.bg_music_path = 'app/client/src/assets/music/gamemusic.mp3'
+        self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
+        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
+        self.flashlight_sound.set_volume(2)
         self.name = name
         self.state_machine = None
         self.player = None
@@ -23,6 +27,10 @@ class GameState:
         return
     
     def enter(self):
+        pygame.mixer.init()
+        pygame.mixer.music.load(self.bg_music_path)
+        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.play(loops=-1)
         self.map = choose_random_map("maps.json")
         #self.map = choose_map("maps.json", "map_1")
         #self.map = get_last_map("maps.json")
@@ -129,6 +137,8 @@ class GameState:
                     self.debug_mode = not self.debug_mode
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.flashlight_sound.play()
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution) 
         print("not collided")
         if (self.player.collide.colliderect(self.npc.collide)):#if (abs(self.player.x - self.npc.x) <= self.player.radius +self.npc.radius) and (abs(self.player.y - self.npc.y) <=self.player.radius+self.npc.radius):
