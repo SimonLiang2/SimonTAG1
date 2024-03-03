@@ -2,6 +2,7 @@ import pygame
 import random
 from CreditName import CreditName
 
+
 class CreditsState:
     
     def __init__(self,name):
@@ -42,17 +43,25 @@ class CreditsState:
         pygame.draw.rect(window, (219,165,255), self.simonName.create_name())
         self.simonName.move()
 
+        self.simonName.adjustment()
+
         self.johnnyName.bounce(self.state_machine)
         pygame.draw.rect(window, self.johnnyName.color, self.johnnyName.create_name())
         self.johnnyName.move()
+
+        self.johnnyName.adjustment()
 
         self.beckyName.bounce(self.state_machine)
         pygame.draw.rect(window, self.beckyName.color, self.beckyName.create_name())
         self.beckyName.move()
 
+        self.beckyName.adjustment()
+
         self.noahName.bounce(self.state_machine)
         pygame.draw.rect(window, self.noahName.color, self.noahName.create_name())
         self.noahName.move()
+
+        self.noahName.adjustment()
 
         
         font = pygame.font.SysFont('Georgia',30) 
@@ -64,7 +73,7 @@ class CreditsState:
 
         window.blit(escText,(20,560))
         #window.blit(creditText, (250,10))
-        window.blit(devText,(220,10))
+        window.blit(devText,(self.state_machine.window_width/2 - 80,10))
         window.blit(self.simonName.text,(self.simonName.rectX + 10, self.simonName.rectY+5))
         window.blit(self.johnnyName.text,(self.johnnyName.rectX +10, self.johnnyName.rectY+5))
         window.blit(self.beckyName.text,(self.beckyName.rectX+10, self.beckyName.rectY+5))
@@ -113,7 +122,6 @@ class CreditsState:
 
         
             
-        
 
     def update(self):
         for event in pygame.event.get():
