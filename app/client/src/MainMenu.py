@@ -27,7 +27,7 @@ class MainMenu:
         quit_filepath = 'app/client/src/assets/images/quit.png'
 
         # Instantiate buttons
-        button_scale = .35
+        button_scale = .45
         self.play_button = MenuButton("Play", self.play_pressed, image_path=play_filepath, scale=button_scale)
         self.credits_button = MenuButton("Credits",self.credits_pressed, image_path=credits_filepath, scale=button_scale)
         self.quit_button = MenuButton("Quit", self.quit_pressed, image_path=quit_filepath, scale=button_scale)
@@ -36,11 +36,11 @@ class MainMenu:
         self.buttons = [self.play_button, self.credits_button, self.quit_button]
 
         logo_path = 'app/client/src/assets/images/logo.png'
-        self.logo = self.create_image(logo_path, rescale=.4)
+        self.logo = self.create_image(logo_path, rescale=.5)
 
         self.settings_inverted_path = 'app/client/src/assets/images/settings-inverted.png'
         self.settings_path = 'app/client/src/assets/images/settings.png'
-        self.settings = self.create_image(self.settings_path, rescale=.07)
+        self.settings = self.create_image(self.settings_path, rescale=.4)
 
         self.info_path = 'app/client/src/assets/images/infoicon.png'
         self.info_path_inverted = 'app/client/src/assets/images/infoicon-inverted.png'
@@ -54,6 +54,7 @@ class MainMenu:
             pygame.mixer.music.load(self.menu_music_filepath)
             pygame.mixer.music.set_volume(0.5)
             pygame.mixer.music.play(loops=-1)
+            
 
             self.button_selected_sound = pygame.mixer.Sound(self.button_select_filepath)
             self.button_selected_sound.set_volume(0.6)
@@ -71,13 +72,14 @@ class MainMenu:
         print(f"Entering: {self.name}")
     
     def leave(self):
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         print(f"Leaving: {self.name}")
     
     # User has selected the play button
     def play_pressed(self):
         time.sleep(0.4)
         self.state_machine.transition("game")
-        pygame.mixer.stop()
+        pygame.mixer.music.stop()
         print("PLAY PRESSED")
 
     # User has selected the credits button
@@ -102,7 +104,7 @@ class MainMenu:
         window.fill(self.window_color)        
 
         # Add the logo to the window
-        window.blit(self.logo, (157,50))
+        window.blit(self.logo, (self.state_machine.window_width//2-162,self.state_machine.window_height//12))
 
         # Add settings  & info icon to window
         window.blit(self.settings, (20,525))
@@ -110,13 +112,13 @@ class MainMenu:
 
         # Blit each button to the window
         # If the button is active(active_button_idx) then set active=True
-        button_x,button_y = 175,250
+        button_x,button_y =  self.state_machine.window_width//2-150,250
         for i,button in enumerate(self.buttons):
             if i == self.active_button_idx:
                 window.blit(button.create_button(active=True), (button_x,button_y))
             else: 
                 window.blit(button.create_button(), (button_x,button_y))
-            button_y+=75 # So they all don't get placed on top of each other
+            button_y+=100 # So they all don't get placed on top of each other
 
 
     def update(self):
@@ -141,13 +143,13 @@ class MainMenu:
 
         # Update active button index based on mouse position only if the last input was from the mouse
         if self.last_input_method == 'mouse':
-            if (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 254) and (current_mouse_pos[1] <= 317):
+            if (current_mouse_pos[0] >= 367) and (current_mouse_pos[0] <= 651) and (current_mouse_pos[1] >= 257) and (current_mouse_pos[1] <= 334):
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.active_button_idx = 0
-            elif (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 333) and (current_mouse_pos[1] <= 385):
+            elif (current_mouse_pos[0] >= 367) and (current_mouse_pos[0] <= 651) and (current_mouse_pos[1] >= 362) and (current_mouse_pos[1] <= 432):
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.active_button_idx = 1
-            elif (current_mouse_pos[0] >= 189) and (current_mouse_pos[0] <= 407) and (current_mouse_pos[1] >= 409) and (current_mouse_pos[1] <= 464):
+            elif (current_mouse_pos[0] >= 367) and (current_mouse_pos[0] <= 651) and (current_mouse_pos[1] >= 462) and (current_mouse_pos[1] <= 529):
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.active_button_idx = 2
             else:
@@ -193,13 +195,13 @@ class MainMenu:
                 click_pos = pygame.mouse.get_pos()
                 
                 # Check if the click is within the bounds of the buttons and act accordingly
-                if (click_pos[0] >= 189) and (click_pos[0] <= 407) and (click_pos[1] >= 254) and (click_pos[1] <= 317):
+                if (click_pos[0] >= 367) and (click_pos[0] <= 651) and (click_pos[1] >= 257) and (click_pos[1] <= 334):
                     self.active_button_idx = 0
                     self.buttons[self.active_button_idx].pressed()
-                elif (click_pos[0] >= 189) and (click_pos[0] <= 407) and (click_pos[1] >= 333) and (click_pos[1] <= 385):
+                elif (click_pos[0] >= 367) and (click_pos[0] <= 651) and (click_pos[1] >= 362) and (click_pos[1] <= 432):
                     self.active_button_idx = 1
                     self.buttons[self.active_button_idx].pressed()
-                elif (click_pos[0] >= 189) and (click_pos[0] <= 407) and (click_pos[1] >= 409) and (click_pos[1] <= 464):
+                elif (click_pos[0] >= 367) and (click_pos[0] <= 651) and (click_pos[1] >= 462) and (click_pos[1] <= 529):
                     self.active_button_idx = 2
                     self.buttons[self.active_button_idx].pressed()
                 elif (click_pos[0] >= 19 and click_pos[0] <= 78) and (click_pos[1] >= 525 and click_pos[0] <= 586):

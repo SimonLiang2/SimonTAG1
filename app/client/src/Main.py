@@ -5,6 +5,7 @@ from MainMenu import MainMenu
 from CreditsState import CreditsState
 from SettingsState import SettingsState
 from InfoState import InfoState
+import random as r
 
 state_machine = StateMachine()
 game_state = GameState("game")
