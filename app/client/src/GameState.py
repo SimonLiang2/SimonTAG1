@@ -1,4 +1,6 @@
 import pygame
+import random as r
+import math 
 from Player import Player
 from NPC import NPC
 from FlashLightUtils import Boundary,Vector,Circle
@@ -22,11 +24,28 @@ class GameState:
         self.mouseB = -1
         self.clock = pygame.time.Clock()
         self.debug_mode = False
+        self.score = 0
         self.walls = []
         self.objects = []
         return
     
+    def reset_map(self):
+        self.map = choose_random_map("maps.json")
+        valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
+        self.npc = NPC(valid_x,valid_y,5)
+        self.objects = []
+        self.objects.append(self.npc)
+        self.walls = []
+        self.gen_boundaries()
+        self.draw_map()
+        self.player.tagged = True
+        self.npc.tagged = False
+        self.score+=1
+        return
+
+
     def enter(self):
+        self.score = 0
         pygame.mixer.init()
         pygame.mixer.music.load(self.bg_music_path)
         pygame.mixer.music.set_volume(0.3)
@@ -35,11 +54,13 @@ class GameState:
         #self.map = choose_map("maps.json", "map_1")
         #self.map = get_last_map("maps.json")
         print(f"Entering: {self.name}")
+
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
+        
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.npc = NPC(valid_x,valid_y,5)
-        self.objects.append(Circle(self.npc.x,self.npc.y,self.npc.radius))
+        self.objects.append(self.npc)
 
         self.gen_boundaries()
         self.draw_map()
@@ -119,7 +140,6 @@ class GameState:
         index_x = int(self.player.x/res)
         index_y = int(self.player.y/res)
         self.player.render(window,self.walls,self.objects)
-        self.npc.render(window)
         if(self.debug_mode):
             for wall in self.walls:
                 wall.render(window)
@@ -137,6 +157,13 @@ class GameState:
                     self.debug_mode = not self.debug_mode
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
+        self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
+        
+        for obj in self.objects:
+            d = math.sqrt(math.pow(obj.x-self.player.position[0],2) + math.pow(obj.y-self.player.position[1],2))
+            if(d<self.player.radius+obj.radius):
+                self.reset_map()  
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.flashlight_sound.play()
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution) 
