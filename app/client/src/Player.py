@@ -52,14 +52,14 @@ class Player:
         self.color = (0,0,255)
         if(self.tagged):
             self.color = (255,255,0)
-        self.collide = pygame.Rect(self.x,self.y,self.radius,self.radius)
+
         pygame.draw.circle(window, self.color, (self.x,self.y),self.radius,0)
         a = set_mag(self.velocity,self.radius*2)
         pygame.draw.line(window,(255,0,0),(self.x,self.y),
                                           (self.x+a[0],self.y+a[1]),1)
         return
     
-    def update(self,keys,mouse,map_data,res):
+    def update(self,keys,mouse,map_data,res,objs=None):
         
         dx = mouse[0] - (self.position[0])
         dy = mouse[1] - (self.position[1])
@@ -74,7 +74,7 @@ class Player:
         self.process_movement(wasd,map_data,res)
         self.x = self.position[0]
         self.y = self.position[1]
-
+     
         return
 
     def process_movement(self,keys,map_data,res):

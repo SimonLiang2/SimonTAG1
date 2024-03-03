@@ -1,4 +1,6 @@
 import pygame
+import random as r
+import math 
 from Player import Player
 from NPC import NPC
 from FlashLightUtils import Boundary,Vector,Circle
@@ -22,11 +24,28 @@ class GameState:
         self.mouseB = -1
         self.clock = pygame.time.Clock()
         self.debug_mode = False
+        self.score = 0
         self.walls = []
         self.objects = []
         return
     
+    def reset_map(self):
+        self.map = choose_random_map("maps.json")
+        valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
+        self.npc = NPC(valid_x,valid_y,5)
+        self.objects = []
+        self.objects.append(self.npc)
+        self.walls = []
+        self.gen_boundaries()
+        self.draw_map()
+        self.player.tagged = True
+        self.npc.tagged = False
+        self.score+=1
+        return
+
+
     def enter(self):
+        self.score = 0
         pygame.mixer.init()
         pygame.mixer.music.load(self.bg_music_path)
         pygame.mixer.music.set_volume(0.3)
@@ -35,11 +54,13 @@ class GameState:
         #self.map = choose_map("maps.json", "map_1")
         #self.map = get_last_map("maps.json")
         print(f"Entering: {self.name}")
+
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
+        
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.npc = NPC(valid_x,valid_y,5)
-        self.objects.append(Circle(self.npc.x,self.npc.y,self.npc.radius))
+        self.objects.append(self.npc)
 
         self.gen_boundaries()
         self.draw_map()
@@ -119,7 +140,6 @@ class GameState:
         index_x = int(self.player.x/res)
         index_y = int(self.player.y/res)
         self.player.render(window,self.walls,self.objects)
-        self.npc.render(window)
         if(self.debug_mode):
             for wall in self.walls:
                 wall.render(window)
@@ -137,40 +157,12 @@ class GameState:
                     self.debug_mode = not self.debug_mode
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.flashlight_sound.play()
-        self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution) 
-        print("not collided")
-        if (self.player.collide.colliderect(self.npc.collide)):#if (abs(self.player.x - self.npc.x) <= self.player.radius +self.npc.radius) and (abs(self.player.y - self.npc.y) <=self.player.radius+self.npc.radius):
-            print("collided")
-            if self.player.tagged:
-                self.npc.tagged = True
-                #self.npc.color = (80,90,200)
-                self.player.tagged = False
-                #self.player.color = (0,0,255)
-            elif self.npc.tagged:
-                self.player.tagged = True
-                #self.player.color = (255,255,0)
-                self.npc.tagged = False
-                #self.npc.color = (255,255,255)
-            else:
-                self.player.tagged=True
-            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-            self.player.x = valid_x
-            self.player.y = valid_y
-            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-            self.npc.x = valid_x
-            self.npc.y = valid_y
-            self.player.position = [self.player.x,self.player.y]
-            self.npc.position = [self.player.x,self.player.y]
-            self.objects[0] = Circle(self.npc.x,self.npc.y,self.npc.radius)
-            self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution)
+        self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
+        
+        for obj in self.objects:
+            d = math.sqrt(math.pow(obj.x-self.player.position[0],2) + math.pow(obj.y-self.player.position[1],2))
+            if(d<self.player.radius+obj.radius):
+                self.reset_map()  
 
-            
-
-        pygame.time
-            
-            
-            
         self.clock.tick(60)  
         return

@@ -15,10 +15,8 @@
 - The game will open up to a main menu screen with a button that transitions to game play 
 - The main menu button will give feedback when clicked
 - When the player spawns in a round timer will start and begin to count down towards zero
-- When the player spawns in they are set as "it" 
 - When the player spawns one "npc" player is randomly spawned on the map
-- When the player touches the "npc" the "npc" becomes "it"
-- When the round timer reaches zero if the player is "it" they are sent back to the main menu
-- When the round timer reaches zero if the player is not "it" a new map and "npc" are generated
-- When a new map is generated the player is set as "it" again and the "npc" is not it 
-- In the game feedback is given for who is currently "it"
+- When the player touches the "npc" the map regenerates and respawns the "npc" in a random location and 
+  the player score is updated
+- When the round timer reaches zero the player is sent back to the main menu and the score is displayed
+
