@@ -20,7 +20,7 @@ class InfoState:
         text1 = font.render('The objective is to find the Hidden Player!',True,(255,255,255))
         text2 = font.render('This is you! You will only be able to see where your mouse is held down.',True,(255,255,255))
         text3 = font.render('Navigate the world and find the hidden player in Time!',True,(255,255,255))
-        text4 = font.render('Find him as many times as you can before the clock runs out',True,(255,255,255))
+        text4 = font.render('Find them as many times as you can before the clock runs out',True,(255,255,255))
         text5 = font.render('Have fun! Gain as many points as possible!',True,(255,255,255))
         escText = font.render('Press ESC key to go back', True, (255,255,255))
         pygame.draw.circle(window, (255,255,0), (self.state_machine.window_width/2,240),20,0)
