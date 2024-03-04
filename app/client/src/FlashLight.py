@@ -77,7 +77,6 @@ class FlashLight:
                 pygame.draw.circle(window,col,(closest.x,closest.y),circle_size)
 
         if(not self.draw_circle):
-            self.circles = []      
-        print(len(self.circles))  
+            self.circles = []       
         for point in self.circles:
             pygame.draw.circle(window,point[2],(point[0],point[1]),point[3])
