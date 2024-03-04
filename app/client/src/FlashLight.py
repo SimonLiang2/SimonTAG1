@@ -16,6 +16,8 @@ class FlashLight:
          self.ray_count = 2  # low resolution
          self.rays = []
          self.divisor = ray_increment
+         self.draw_circle = False
+         self.circles = []
 
      def update_rays(self,theta):
         self.rays = []
@@ -28,6 +30,7 @@ class FlashLight:
         self.update_rays(theta)
 
      def flash(self,window,walls,objs=None):
+        self.draw_circle = False
         for ray in self.rays:
             pt = None
             closest = None
@@ -60,13 +63,20 @@ class FlashLight:
                 #color of the flashlight
                 blend = pygame.Color(105,100,0,85)
                 blend.a = 255
-                if(circ != None):
-                    circle_size = 2
-                    line_size = 4
-                    pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
-                    pygame.draw.circle(window,col,(circ.x,circ.y),circle_size)
-                
                 if(circ == None):
                     pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
+                if(circ != None):
+                    circle_size = 1
+                    line_size = 3
+                    pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
+                    self.draw_circle = True
+                    if(len(self.circles) < 600):
+                        self.circles.append([circ.x,circ.y,col,circle_size])
+                        self.circles.append([closest.x,closest.y,col,circle_size])
+                    pygame.draw.circle(window,col,(circ.x,circ.y),circle_size)
                 pygame.draw.circle(window,col,(closest.x,closest.y),circle_size)
-                
+
+        if(not self.draw_circle):
+            self.circles = []       
+        for point in self.circles:
+            pygame.draw.circle(window,point[2],(point[0],point[1]),point[3])
