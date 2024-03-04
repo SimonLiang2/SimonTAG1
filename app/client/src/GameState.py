@@ -148,6 +148,29 @@ class GameState:
         res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
+
+        self.game_timer.color = (0, 255, 0)
+        timer_font = pygame.font.SysFont('Georgia',30)
+        text = timer_font.render(f"Game Timer: {self.game_timer.time}", True, self.game_timer.color, (255,255,255))
+        text_background = text.get_rect()
+
+        self.state_machine.window.blit(text, text_background)
+
+        self.game_timer.color = (0, 255, 0)
+        timer_font = pygame.font.SysFont('Georgia',30)
+        text = timer_font.render(f"Round-Timer: {self.game_timer.time}", True, self.game_timer.color, (255,255,255))
+        text_background = text.get_rect()
+
+        self.state_machine.window.blit(text, text_background)
+
+        color = (0, 255, 0)
+        score_font = pygame.font.SysFont('Georgia',30)
+        text = score_font.render(f"Touch Counter: {self.score}", True, color, (255,255,255))
+        text_background_score = text.get_rect()
+        text_background_score = (500, 0)
+
+        self.state_machine.window.blit(text, text_background_score)
+
         if(self.debug_mode):
             window.blit(self.map_img, (0,0))
         index_x = int(self.player.x/res)
@@ -164,6 +187,7 @@ class GameState:
         keys = pygame.key.get_pressed()
         self.mouseX,self.mouseY = pygame.mouse.get_pos()
         self.mouseB = pygame.mouse.get_pressed()
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:

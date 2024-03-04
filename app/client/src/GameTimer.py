@@ -1,9 +1,9 @@
 import time as times
 class GameTimer:
     def __init__(self, coords, end_func, color=(0,0,0), time=90):
-        self.start_time = time+1
+        self.start_time = time
         self.epoch_time = int(times.time())
-        self.time = time+1
+        self.time = time
         self.coords = coords
         self.color = color
         self.end_func = end_func
