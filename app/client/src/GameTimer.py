@@ -17,6 +17,6 @@ class GameTimer:
         if self.epoch_time < int(times.time()):
             self.tick()
             self.epoch_time = int(times.time())
-
+            #print(self.time)
     def reset(self):
         self.time = self.start_time

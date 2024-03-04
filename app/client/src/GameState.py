@@ -54,7 +54,7 @@ class GameState:
 
     def enter(self):
         self.score = 0
-        self.game_timer = GameTimer((100,200), self.go_to_menu, time=10, color=(255,255,255))
+        self.game_timer = GameTimer((100,200), self.go_to_menu, time=30, color=(255,255,255))
         pygame.mixer.init()
         pygame.mixer.music.load(self.bg_music_path)
         pygame.mixer.music.set_volume(0.3)
@@ -79,6 +79,7 @@ class GameState:
         return
     
     def leave(self):
+        print(f"Score: {self.score}")
         print(f"Leaving: {self.name}")
         self.walls = []
         return
