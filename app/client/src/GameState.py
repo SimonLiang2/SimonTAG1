@@ -54,7 +54,6 @@ class GameState:
 
 
     def enter(self):
-       
         self.score = 0
         self.game_timer = GameTimer((100,200), self.go_to_menu, time=30, color=(255,255,255))
         pygame.mixer.init()
