@@ -53,6 +53,7 @@ class GameState:
 
 
     def enter(self):
+       
         self.score = 0
         self.game_timer = GameTimer((100,200), self.go_to_menu, time=30, color=(255,255,255))
         pygame.mixer.init()
@@ -82,6 +83,7 @@ class GameState:
         print(f"Score: {self.score}")
         print(f"Leaving: {self.name}")
         self.walls = []
+        self.objects = []
         return
     
     def get_val_from_map(self,x,y):
