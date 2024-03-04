@@ -19,6 +19,7 @@ def generate_and_append_maps(x, res, width, height, file_path):
     with open(file_path, 'w') as file:
         json.dump(data, file, indent=4)
     print(f"MAP GENERATED: map_{len(data)}")
+
 def choose_random_map(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
@@ -29,10 +30,11 @@ def choose_random_map(file_path):
     return data[random_key]
 
 def choose_map(file_path, idx):
+    
     with open(file_path, 'r') as file:
         data = json.load(file)
-    
-    print("Map:", data[idx])
+
+    #print("Map:", data[idx])
     
     return data[idx]
 

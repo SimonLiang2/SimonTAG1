@@ -36,6 +36,7 @@ class GameState:
         self.state_machine.transition('menu')
 
     def reset_map(self):
+        self.player.flash_light.draw_circle = False
         self.map = choose_random_map("maps.json")
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.npc = NPC(valid_x,valid_y,5)
@@ -54,20 +55,22 @@ class GameState:
 
 
     def enter(self):
+        self.debug_mode = False
         self.score = 0
         self.game_timer = GameTimer((100,200), self.go_to_menu, time=30, color=(255,255,255))
         pygame.mixer.init()
         pygame.mixer.music.load(self.bg_music_path)
         pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.play(loops=-1)
-        self.map = choose_random_map("maps.json")
+        #self.map = choose_random_map("maps.json")
+        self.map = choose_map("maps.json",'map_1')
         print(f"Entering: {self.name}")
 
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
         
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.npc = NPC(valid_x,valid_y,5)
+        self.npc = NPC(4*self.box_resolution,7*self.box_resolution,5)
         self.objects.append(self.npc)
 
         self.gen_boundaries()
@@ -150,8 +153,6 @@ class GameState:
         window.fill(background_color)
         if(self.debug_mode):
             window.blit(self.map_img, (0,0))
-        index_x = int(self.player.x/res)
-        index_y = int(self.player.y/res)
         self.player.render(window,self.walls,self.objects)
         if(self.debug_mode):
             for wall in self.walls:
@@ -174,7 +175,7 @@ class GameState:
         
         for obj in self.objects:
             d = math.sqrt(math.pow(obj.x-self.player.position[0],2) + math.pow(obj.y-self.player.position[1],2))
-            if(d<self.player.radius+obj.radius):
+            if(d<(self.player.radius+obj.radius)+5):
                 self.reset_map()  
 
         self.clock.tick(60)  
