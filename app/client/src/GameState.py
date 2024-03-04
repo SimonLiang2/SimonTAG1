@@ -1,4 +1,5 @@
 import pygame
+import time
 import random as r
 import math 
 from Player import Player
@@ -6,6 +7,7 @@ from NPC import NPC
 from FlashLightUtils import Boundary,Vector,Circle
 from MapStates import gen_map, find_spawn_point;
 from CreateMaps import choose_random_map, choose_map, get_last_map
+from GameTimer import GameTimer
 
 class GameState:
     def __init__(self,name):
@@ -27,12 +29,18 @@ class GameState:
         self.score = 0
         self.walls = []
         self.objects = []
+        self.epoch_time = int(time.time())
         return
     
+    def go_to_menu(self):
+        self.state_machine.transition('menu')
+
     def reset_map(self):
         self.map = choose_random_map("maps.json")
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.npc = NPC(valid_x,valid_y,5)
+        valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
+        self.player = Player(valid_x, valid_y,5)
         self.objects = []
         self.objects.append(self.npc)
         self.walls = []
@@ -46,6 +54,7 @@ class GameState:
 
     def enter(self):
         self.score = 0
+        self.game_timer = GameTimer((100,200), self.go_to_menu, time=30, color=(255,255,255))
         pygame.mixer.init()
         pygame.mixer.music.load(self.bg_music_path)
         pygame.mixer.music.set_volume(0.3)
@@ -70,6 +79,7 @@ class GameState:
         return
     
     def leave(self):
+        print(f"Score: {self.score}")
         print(f"Leaving: {self.name}")
         self.walls = []
         return
@@ -132,6 +142,7 @@ class GameState:
         return
 
     def render(self,window=None):
+        self.game_timer.update()
         res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
