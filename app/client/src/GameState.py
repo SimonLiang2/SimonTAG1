@@ -41,6 +41,7 @@ class GameState:
 
 
     def enter(self):
+       
         self.score = 0
         self.map = choose_random_map("maps.json")
         #self.map = choose_map("maps.json", "map_1")
@@ -64,6 +65,7 @@ class GameState:
     def leave(self):
         print(f"Leaving: {self.name}")
         self.walls = []
+        self.objects = []
         return
     
     def get_val_from_map(self,x,y):
