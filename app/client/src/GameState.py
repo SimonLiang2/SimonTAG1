@@ -39,13 +39,14 @@ class GameState:
         self.map = choose_random_map("maps.json")
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.npc = NPC(valid_x,valid_y,5)
-        valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.player = Player(valid_x, valid_y,5)
         self.objects = []
         self.objects.append(self.npc)
         self.walls = []
         self.gen_boundaries()
         self.draw_map()
+        if(self.get_val_from_map(self.player.x/self.box_resolution,self.player.y/self.box_resolution) != 0):
+            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
+            self.player = Player(valid_x, valid_y,5)
         self.player.tagged = True
         self.npc.tagged = False
         self.score+=1
@@ -61,8 +62,6 @@ class GameState:
         pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.play(loops=-1)
         self.map = choose_random_map("maps.json")
-        #self.map = choose_map("maps.json", "map_1")
-        #self.map = get_last_map("maps.json")
         print(f"Entering: {self.name}")
 
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
@@ -87,6 +86,8 @@ class GameState:
         return
     
     def get_val_from_map(self,x,y):
+        x = int(x)
+        y = int(y)
         if((0 <= x and x <= len(self.map[0])-1) and (0 <= y and y <= len(self.map)-1)):
             return self.map[y][x]
         return None
