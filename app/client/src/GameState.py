@@ -164,40 +164,5 @@ class GameState:
             if(d<self.player.radius+obj.radius):
                 self.reset_map()  
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.flashlight_sound.play()
-        self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution) 
-        print("not collided")
-        if (self.player.collide.colliderect(self.npc.collide)):#if (abs(self.player.x - self.npc.x) <= self.player.radius +self.npc.radius) and (abs(self.player.y - self.npc.y) <=self.player.radius+self.npc.radius):
-            print("collided")
-            if self.player.tagged:
-                self.npc.tagged = True
-                #self.npc.color = (80,90,200)
-                self.player.tagged = False
-                #self.player.color = (0,0,255)
-            elif self.npc.tagged:
-                self.player.tagged = True
-                #self.player.color = (255,255,0)
-                self.npc.tagged = False
-                #self.npc.color = (255,255,255)
-            else:
-                self.player.tagged=True
-            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-            self.player.x = valid_x
-            self.player.y = valid_y
-            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-            self.npc.x = valid_x
-            self.npc.y = valid_y
-            self.player.position = [self.player.x,self.player.y]
-            self.npc.position = [self.player.x,self.player.y]
-            self.objects[0] = Circle(self.npc.x,self.npc.y,self.npc.radius)
-            self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution)
-
-            
-
-        pygame.time
-            
-            
-            
         self.clock.tick(60)  
         return
