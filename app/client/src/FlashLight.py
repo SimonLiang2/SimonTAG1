@@ -67,10 +67,10 @@ class FlashLight:
                     pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
                 if(circ != None):
                     circle_size = 1
-                    line_size = 3
+                    line_size = 4
                     pygame.draw.line(window,blend,(self.pos.x,self.pos.y),(closest.x,closest.y),line_size)
                     self.draw_circle = True
-                    if(len(self.circles) < 600):
+                    if(len(self.circles) < 50):
                         self.circles.append([circ.x,circ.y,col,circle_size])
                         self.circles.append([closest.x,closest.y,col,circle_size])
                     pygame.draw.circle(window,col,(circ.x,circ.y),circle_size)
