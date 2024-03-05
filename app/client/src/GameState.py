@@ -41,6 +41,8 @@ class GameState:
     def reset_map(self):
         pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
         self.map = choose_random_map("maps.json")
+        while(self.get_val_from_map(self.player.x/self.box_resolution,self.player.y/self.box_resolution) != 0):
+            self.map = choose_random_map("maps.json")
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.npc = NPC(valid_x,valid_y,5)
         self.objects = []
@@ -48,9 +50,6 @@ class GameState:
         self.walls = []
         self.gen_boundaries()
         self.draw_map()
-        if(self.get_val_from_map(self.player.x/self.box_resolution,self.player.y/self.box_resolution) != 0):
-            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-            self.player = Player(valid_x, valid_y,5)
         self.player.tagged = True
         self.npc.tagged = False
         self.state_machine.player_score+=1
@@ -65,7 +64,6 @@ class GameState:
         pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
 
         self.map = choose_map("maps.json",'map_1')
-        print(f"Entering: {self.name}")
 
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
@@ -175,6 +173,11 @@ class GameState:
                     self.debug_mode = not self.debug_mode
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
+            if event.type == pygame.KEYDOWN:
+                key = event.key
+                if key == pygame.K_ESCAPE:
+                    self.state_machine.transition("endgame")
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 

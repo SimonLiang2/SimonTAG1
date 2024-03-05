@@ -24,7 +24,7 @@ def choose_random_map(file_path):
         data = json.load(file)
     
     random_key = random.choice(list(data.keys()))
-    print("Map:", random_key)
+    #print("Map:", random_key)
     
     return data[random_key]
 
@@ -32,7 +32,7 @@ def choose_map(file_path, idx):
     with open(file_path, 'r') as file:
         data = json.load(file)
     
-    print("Map:", data[idx])
+    #print("Map:", data[idx])
     
     return data[idx]
 
