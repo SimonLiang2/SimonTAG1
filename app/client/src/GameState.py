@@ -14,10 +14,12 @@ class GameState:
         pygame.mixer.init()
         self.bg_music_path = 'app/client/src/assets/music/gamemusic.mp3'
         self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
+        self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
         self.bg_music = pygame.mixer.Sound(self.bg_music_path)
         self.bg_music.set_volume(0.3)
         self.game_timer = None
         self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
+        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
         self.name = name
         self.state_machine = None
         self.player = None
@@ -173,6 +175,8 @@ class GameState:
                     self.debug_mode = not self.debug_mode
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
         
         for obj in self.objects:
