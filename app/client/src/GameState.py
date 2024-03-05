@@ -11,10 +11,13 @@ from GameTimer import GameTimer
 
 class GameState:
     def __init__(self,name):
+        pygame.mixer.init()
         self.bg_music_path = 'app/client/src/assets/music/gamemusic.mp3'
-        self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
-        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
-        self.flashlight_sound.set_volume(2)
+        self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
+        self.bg_music = pygame.mixer.Sound(self.bg_music_path)
+        self.bg_music.set_volume(0.3)
+        self.game_timer = None
+        self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
         self.name = name
         self.state_machine = None
         self.player = None
@@ -26,16 +29,15 @@ class GameState:
         self.mouseB = -1
         self.clock = pygame.time.Clock()
         self.debug_mode = False
-        self.score = 0
         self.walls = []
         self.objects = []
-        self.epoch_time = int(time.time())
         return
     
-    def go_to_menu(self):
-        self.state_machine.transition('menu')
+    def go_to_end_game(self):
+        self.state_machine.transition('endgame')
 
     def reset_map(self):
+        pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
         self.map = choose_random_map("maps.json")
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.npc = NPC(valid_x,valid_y,5)
@@ -49,26 +51,25 @@ class GameState:
             self.player = Player(valid_x, valid_y,5)
         self.player.tagged = True
         self.npc.tagged = False
-        self.score+=1
+        self.state_machine.player_score+=1
         return
 
 
     def enter(self):
-       
-        self.score = 0
-        self.game_timer = GameTimer((100,200), self.go_to_menu, time=30, color=(255,255,255))
-        pygame.mixer.init()
-        pygame.mixer.music.load(self.bg_music_path)
-        pygame.mixer.music.set_volume(0.3)
-        pygame.mixer.music.play(loops=-1)
-        self.map = choose_random_map("maps.json")
+        pygame.mixer.music.stop()
+        self.state_machine.player_score = 0
+
+        self.game_timer = GameTimer((100,200), self.go_to_end_game, time=5, color=(255,255,255))
+        pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
+
+        self.map = choose_map("maps.json",'map_1')
         print(f"Entering: {self.name}")
 
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
         
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.npc = NPC(valid_x,valid_y,5)
+        self.npc = NPC(4*self.box_resolution,7*self.box_resolution,5)
         self.objects.append(self.npc)
 
         self.gen_boundaries()
@@ -79,8 +80,9 @@ class GameState:
         return
     
     def leave(self):
-        print(f"Score: {self.score}")
         print(f"Leaving: {self.name}")
+        pygame.mixer.Channel(0).stop()
+        pygame.mixer.Channel(1).stop()
         self.walls = []
         self.objects = []
         return
@@ -145,37 +147,12 @@ class GameState:
         return
 
     def render(self,window=None):
-        self.game_timer.update()
         res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
-
-        self.game_timer.color = (0, 255, 0)
-        timer_font = pygame.font.SysFont('Georgia',30)
-        text = timer_font.render(f"Game Timer: {self.game_timer.time}", True, self.game_timer.color, (255,255,255))
-        text_background = text.get_rect()
-
-        self.state_machine.window.blit(text, text_background)
-
-        self.game_timer.color = (0, 255, 0)
-        timer_font = pygame.font.SysFont('Georgia',30)
-        text = timer_font.render(f"Round-Timer: {self.game_timer.time}", True, self.game_timer.color, (255,255,255))
-        text_background = text.get_rect()
-
-        self.state_machine.window.blit(text, text_background)
-
-        color = (0, 255, 0)
-        score_font = pygame.font.SysFont('Georgia',30)
-        text = score_font.render(f"Touch Counter: {self.score}", True, color, (255,255,255))
-        text_background_score = text.get_rect()
-        text_background_score = (500, 0)
-
-        self.state_machine.window.blit(text, text_background_score)
-
         if(self.debug_mode):
             window.blit(self.map_img, (0,0))
-        index_x = int(self.player.x/res)
-        index_y = int(self.player.y/res)
+        self.game_timer.render(window,self.debug_mode,self.state_machine.player_score,self.state_machine.window_width)
         self.player.render(window,self.walls,self.objects)
         if(self.debug_mode):
             for wall in self.walls:
@@ -185,6 +162,7 @@ class GameState:
         return
 
     def update(self):
+        self.game_timer.update()
         keys = pygame.key.get_pressed()
         self.mouseX,self.mouseY = pygame.mouse.get_pos()
         self.mouseB = pygame.mouse.get_pressed()

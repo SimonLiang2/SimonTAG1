@@ -7,6 +7,7 @@ class StateMachine:
         pygame.init()
         self.window_width = 1000
         self.window_height = 600
+        self.player_score = 0
         self.window = pygame.display.set_mode((self.window_width, self.window_height))
         pygame.display.set_caption("Tag Game")
         return
