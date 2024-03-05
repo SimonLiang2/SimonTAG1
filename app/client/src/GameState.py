@@ -59,7 +59,7 @@ class GameState:
         pygame.mixer.music.stop()
         self.state_machine.player_score = 0
 
-        self.game_timer = GameTimer((100,200), self.go_to_end_game, time=5, color=(255,255,255))
+        self.game_timer = GameTimer((100,200), self.go_to_end_game, time=30, color=(255,255,255))
         pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
 
         self.map = choose_map("maps.json",'map_1')
@@ -173,6 +173,11 @@ class GameState:
                     self.debug_mode = not self.debug_mode
             if event.type == pygame.QUIT:
                 self.state_machine.window_should_close = True
+            if event.type == pygame.KEYDOWN:
+                key = event.key
+                if key == pygame.K_ESCAPE:
+                    self.state_machine.transition("endgame")
+                    
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
         
         for obj in self.objects:
