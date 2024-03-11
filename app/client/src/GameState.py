@@ -179,14 +179,14 @@ class GameState:
                 key = event.key
                 if key == pygame.K_ESCAPE:
                     self.state_machine.transition("endgame")
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
         pdata = self.state_machine.client_socket.player_data
         if(pdata):
             for key,data in pdata.items():
                 if(key != self.state_machine.client_socket.id):
                     self.objects.append(NPC(data[0],data[1],5))
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
+            
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
         self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
         self.clock.tick(60)  
