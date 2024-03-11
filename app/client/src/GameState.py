@@ -66,7 +66,7 @@ class GameState:
         
         self.state_machine.client_socket.send_data("map-req")
         time.sleep(SLEEPTIME)    
-        
+
         self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
 
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
@@ -197,6 +197,9 @@ class GameState:
                 
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
-            
+        
+        elif(self.game_timer.time <= -5):
+            self.reset_map()
+
         self.clock.tick(60)  
         return
