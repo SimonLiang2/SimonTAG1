@@ -31,9 +31,15 @@ class PacketHandler:
                 response = Packet(source=self.packet.source, header="timer-update", data=self.round_data)
                 response = response.serialize()
                 self.client_conn.send(response)
+            case "map-req":
+                map_name = "map_43"
+                response = Packet(source=self.packet.source, header="map-update", data=map_name)
+                response = response.serialize()
+                self.client_conn.send(response)
             case "player-leave":
                 del self.clients_data[self.client_id]
                 self.clients_data = self.clients_data
+
                 
 
     def kill_socket_event(self):

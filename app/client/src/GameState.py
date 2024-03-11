@@ -9,6 +9,8 @@ from MapStates import gen_map, find_spawn_point;
 from CreateMaps import choose_random_map, choose_map, get_last_map
 from GameTimer import GameTimer
 
+
+SLEEPTIME = 0.1
 class GameState:
     def __init__(self,name):
         pygame.mixer.init()
@@ -40,19 +42,18 @@ class GameState:
 
     def reset_map(self):
         pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
-        self.map = choose_random_map("maps.json")
-        while(self.get_val_from_map(self.player.x/self.box_resolution,self.player.y/self.box_resolution) != 0):
-            self.map = choose_random_map("maps.json")
+
+        self.state_machine.client_socket.send_data("map-req")
+        time.sleep(SLEEPTIME)    
+        self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
+
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.npc = NPC(valid_x,valid_y,5)
+        self.player = Player(valid_x, valid_y,5)
+
         self.objects = []
-        self.objects.append(self.npc)
         self.walls = []
         self.gen_boundaries()
         self.draw_map()
-        self.player.tagged = True
-        self.npc.tagged = False
-        self.state_machine.player_score+=1
         return
 
 
@@ -62,8 +63,11 @@ class GameState:
 
         self.game_timer = GameTimer((100,200), self.go_to_end_game, time=30, color=(255,255,255))
         pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
-
-        self.map = choose_map("maps.json",'map_1')
+        
+        self.state_machine.client_socket.send_data("map-req")
+        time.sleep(SLEEPTIME)    
+        
+        self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
 
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
