@@ -152,7 +152,7 @@ class GameState:
         window.fill(background_color)
         if(self.debug_mode):
             window.blit(self.map_img, (0,0))
-        self.game_timer.render(window,self.debug_mode,self.state_machine.player_score,self.state_machine.window_width)
+        self.game_timer.render(window,self.debug_mode,self.state_machine.window_width)
                        
         self.player.render(window,self.walls,self.objects)
         if(self.debug_mode):
@@ -164,7 +164,7 @@ class GameState:
 
     def update(self):
         self.objects = []
-        self.game_timer.update()
+        self.game_timer.update(self.state_machine.client_socket.round_data[0])
         keys = pygame.key.get_pressed()
         self.mouseX,self.mouseY = pygame.mouse.get_pos()
         self.mouseB = pygame.mouse.get_pressed()
@@ -181,6 +181,7 @@ class GameState:
                     self.state_machine.transition("endgame")
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
+
         pdata = self.state_machine.client_socket.player_data
         if(pdata):
             for key,data in pdata.items():
@@ -189,5 +190,6 @@ class GameState:
             
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
         self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
+        
         self.clock.tick(60)  
         return
