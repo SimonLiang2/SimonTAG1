@@ -166,7 +166,7 @@ class GameState:
         self.objects = []
         self.game_timer.update(self.state_machine.client_socket.round_data[0])
         
-        if(self.game_timer().time <= 0):
+        if(self.game_timer.time <= 0):
             self.state_machine.transition("endgame")
 
         keys = pygame.key.get_pressed()

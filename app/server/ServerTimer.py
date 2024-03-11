@@ -7,8 +7,10 @@ class ServerTimer:
         self.time = time
 
     def tick(self):
-        if self.time > 0:
+        if self.time > -5:
             self.time -= 1
+        elif self.time <= -5:
+            self.reset()
 
     def update(self):
         if self.epoch_time < int(times.time()):
