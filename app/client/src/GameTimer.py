@@ -20,11 +20,7 @@ class GameTimer:
         text_rect = text.get_rect()
         text_rect.center = ((window_width/2)-20, 30) 
         window.blit(text, text_rect)
-
-        # text = font.render(f"Score: {score}", True, self.color) 
-        # text_rect = text.get_rect()
-        # text_rect.center = (100, 30) 
-        # window.blit(text, text_rect)
+        
         return
         
     def update(self,num):

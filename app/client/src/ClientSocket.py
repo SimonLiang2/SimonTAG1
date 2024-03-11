@@ -11,7 +11,7 @@ class ClientSocket:
         self.listening = listening
         self.id = None
         self.player_data = None
-        self.round_data = [90,"map_1"]
+        self.round_timer = 90
         return
     
     def start_thread(self):
@@ -52,8 +52,8 @@ class ClientSocket:
                 print("----------------------")
             elif(response.header == "player-tick"):
                 self.player_data = response.data
-            elif(response.header == "update-tick"):
-                self.round_data = response.data
+            elif(response.header == "timer-update"):
+                self.round_timer  = response.data
 
         self.kill_connection()
         return 

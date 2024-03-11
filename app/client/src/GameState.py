@@ -164,36 +164,35 @@ class GameState:
 
     def update(self):
         self.objects = []
-        self.game_timer.update(self.state_machine.client_socket.round_data[0])
-        
-        if(self.game_timer.time <= 0):
-            self.state_machine.transition("endgame")
+        self.state_machine.client_socket.send_data("timer-req")
+        self.game_timer.update(self.state_machine.client_socket.round_timer) 
 
-        keys = pygame.key.get_pressed()
-        self.mouseX,self.mouseY = pygame.mouse.get_pos()
-        self.mouseB = pygame.mouse.get_pressed()
+        if(self.game_timer.time > 0):
+            keys = pygame.key.get_pressed()
+            self.mouseX,self.mouseY = pygame.mouse.get_pos()
+            self.mouseB = pygame.mouse.get_pressed()
 
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.debug_mode = not self.debug_mode
-            if event.type == pygame.QUIT:
-                self.state_machine.window_should_close = True
-            if event.type == pygame.KEYDOWN:
-                key = event.key
-                if key == pygame.K_ESCAPE:
-                    self.state_machine.transition("endgame")
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.debug_mode = not self.debug_mode
+                if event.type == pygame.QUIT:
+                    self.state_machine.window_should_close = True
+                if event.type == pygame.KEYDOWN:
+                    key = event.key
+                    if key == pygame.K_ESCAPE:
+                        self.state_machine.transition("endgame")
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
 
-        pdata = self.state_machine.client_socket.player_data
-        if(pdata):
-            for key,data in pdata.items():
-                if(key != self.state_machine.client_socket.id):
-                    self.objects.append(NPC(data[0],data[1],5))
+            pdata = self.state_machine.client_socket.player_data
+            if(pdata):
+                for key,data in pdata.items():
+                    if(key != self.state_machine.client_socket.id):
+                        self.objects.append(NPC(data[0],data[1],5))
+                
+            self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
+            self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
             
-        self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
-        self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
-        
         self.clock.tick(60)  
         return
