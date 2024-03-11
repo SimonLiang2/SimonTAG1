@@ -11,7 +11,7 @@ class ClientSocket:
         self.listening = listening
         self.id = None
         self.player_data = None
-        self.round_data = [90, "map_1"]
+        self.round_data = [90,"map_1"]
         return
     
     def start_thread(self):
