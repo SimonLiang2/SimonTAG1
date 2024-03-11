@@ -5,10 +5,12 @@ import random
 import time
 from Packet import Packet
 from Handler import PacketHandler
+from ServerTimer import ServerTimer
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
     def __init__(self, host='127.0.0.1', port=3000, client_max=5, debug=False):
+        self.timer = ServerTimer(time=15)
         self.BUFFER_SIZE = 4096
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
@@ -64,7 +66,7 @@ class GameServer:
                     print(f"Data  : \t{packet.data}")
                     print(f"----------------------------")
 
-                packetHandler = PacketHandler(client_conn, self.clients_conns, self.clients_data, client_id, packet)
+                packetHandler = PacketHandler(client_conn, self.clients_conns, self.clients_data, client_id, packet, self.timer)
                 packetHandler.handle_event()
 
             except ConnectionResetError:
