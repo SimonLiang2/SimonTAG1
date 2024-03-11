@@ -21,9 +21,14 @@ class PacketHandler:
                 response = Packet(source=self.packet.source, header="player-tick", data=self.clients_data)
                 response = response.serialize()
                 self.client_conn.send(response)
-
+            
                 self.round_data = [self.timer.update(), "map_1"]
                 response = Packet(source=self.packet.source, header="update-tick", data=self.round_data)
+                response = response.serialize()
+                self.client_conn.send(response)
+            case "timer-req":
+                self.round_data = self.timer.update()
+                response = Packet(source=self.packet.source, header="timer-update", data=self.round_data)
                 response = response.serialize()
                 self.client_conn.send(response)
             case "player-leave":
