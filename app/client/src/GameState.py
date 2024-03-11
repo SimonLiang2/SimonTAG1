@@ -14,10 +14,12 @@ class GameState:
         pygame.mixer.init()
         self.bg_music_path = 'app/client/src/assets/music/gamemusic.mp3'
         self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
+        self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
         self.bg_music = pygame.mixer.Sound(self.bg_music_path)
         self.bg_music.set_volume(0.3)
         self.game_timer = None
         self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
+        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
         self.name = name
         self.state_machine = None
         self.player = None
@@ -177,12 +179,14 @@ class GameState:
                 key = event.key
                 if key == pygame.K_ESCAPE:
                     self.state_machine.transition("endgame")
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
         pdata = self.state_machine.client_socket.player_data
         if(pdata):
             for key,data in pdata.items():
                 if(key != self.state_machine.client_socket.id):
                     self.objects.append(NPC(data[0],data[1],5))
-                    
+            
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
         self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
         self.clock.tick(60)  
