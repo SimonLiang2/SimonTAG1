@@ -80,7 +80,7 @@ class GameState:
         return
     
     def leave(self):
-        print(f"Leaving: {self.name}")
+        self.state_machine.client_socket.send_data("player-leave")
         pygame.mixer.Channel(0).stop()
         pygame.mixer.Channel(1).stop()
         self.walls = []
@@ -153,6 +153,7 @@ class GameState:
         if(self.debug_mode):
             window.blit(self.map_img, (0,0))
         self.game_timer.render(window,self.debug_mode,self.state_machine.player_score,self.state_machine.window_width)
+                       
         self.player.render(window,self.walls,self.objects)
         if(self.debug_mode):
             for wall in self.walls:
@@ -162,6 +163,7 @@ class GameState:
         return
 
     def update(self):
+        self.objects = []
         self.game_timer.update()
         keys = pygame.key.get_pressed()
         self.mouseX,self.mouseY = pygame.mouse.get_pos()
@@ -177,15 +179,15 @@ class GameState:
                 key = event.key
                 if key == pygame.K_ESCAPE:
                     self.state_machine.transition("endgame")
+        pdata = self.state_machine.client_socket.player_data
+        if(pdata):
+            for key,data in pdata.items():
+                if(key != self.state_machine.client_socket.id):
+                    self.objects.append(NPC(data[0],data[1],5))
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
         self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
-        
-        for obj in self.objects:
-            d = math.sqrt(math.pow(obj.x-self.player.position[0],2) + math.pow(obj.y-self.player.position[1],2))
-            if(d<self.player.radius+obj.radius):
-                self.reset_map()  
-
+        self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
         self.clock.tick(60)  
         return
