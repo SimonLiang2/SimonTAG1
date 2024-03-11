@@ -1,13 +1,14 @@
 import time as times
 
 class ServerTimer:
-    def __init__(self, time=15):
+    def __init__(self, time=15, wait_time=-3):
         self.start_time = time
         self.epoch_time = int(times.time())
         self.time = time
+        self.wait_time = wait_time
 
     def tick(self):
-        if self.time > -5:
+        if self.time > self.wait_times:
             self.time -= 1
         elif self.time <= -5:
             self.reset()
