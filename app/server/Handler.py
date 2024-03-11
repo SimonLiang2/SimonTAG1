@@ -22,7 +22,7 @@ class PacketHandler:
                 response = response.serialize()
                 self.client_conn.send(response)
             
-                self.round_data = [self.timer.update(), "map_1"]
+                self.round_data = [self.timer.update(), self.timer.map]
                 response = Packet(source=self.packet.source, header="update-tick", data=self.round_data)
                 response = response.serialize()
                 self.client_conn.send(response)
@@ -32,7 +32,8 @@ class PacketHandler:
                 response = response.serialize()
                 self.client_conn.send(response)
             case "map-req":
-                map_name = "map_43"
+                self.timer.update()
+                map_name = self.timer.map
                 response = Packet(source=self.packet.source, header="map-update", data=map_name)
                 response = response.serialize()
                 self.client_conn.send(response)

@@ -198,7 +198,7 @@ class GameState:
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
         
-        elif(self.game_timer.time <= -5):
+        elif(self.game_timer.time < -2):
             self.reset_map()
 
         self.clock.tick(60)  

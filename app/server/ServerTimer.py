@@ -1,4 +1,5 @@
 import time as times
+import random
 
 class ServerTimer:
     def __init__(self, time=15, wait_time=-3):
@@ -6,17 +7,25 @@ class ServerTimer:
         self.epoch_time = int(times.time())
         self.time = time
         self.wait_time = wait_time
+        self.map = self.choose_map()
+    
+    def choose_map(self, maxnum=110):
+        num = random.randint(1,maxnum)
+        return (f"map_{str(num)}")
 
     def tick(self):
-        if self.time > self.wait_times:
+        if self.time >= self.wait_time:
             self.time -= 1
-        elif self.time <= -5:
+        elif self.time < self.wait_time:
+            self.map = self.choose_map()
+            print(f"NEW MAP: {self.map}")
             self.reset()
 
     def update(self):
         if self.epoch_time < int(times.time()):
             self.tick()
             self.epoch_time = int(times.time())
+            
         return self.time
 
     def reset(self):
