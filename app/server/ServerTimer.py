@@ -16,9 +16,10 @@ class ServerTimer:
     def tick(self):
         if self.time >= self.wait_time:
             self.time -= 1
+            if self.time == 0: print(">> TIME IS UP!")
         elif self.time < self.wait_time:
             self.map = self.choose_map()
-            print(f"NEW MAP: {self.map}")
+            print(f">> Round begins at {self.map}")
             self.reset()
 
     def update(self):

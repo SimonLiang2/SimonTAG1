@@ -42,6 +42,13 @@ class GameServer:
     # Used to deserialize Packets
     def unpack_packet(self, data):
         return pickle.loads(data)
+    
+    def print_packet_data(self,packet,addr):
+        print(f"----{addr}----")
+        print(f"Source: \t{packet.source}")
+        print(f"Header: \t{packet.header}")
+        print(f"Data  : \t{packet.data}")
+        print(f"----------------------------")
 
     # Thread created to handle each client
     def client_thread(self, client_conn, addr,_client_id):
@@ -52,82 +59,83 @@ class GameServer:
                 data = client_conn.recv(self.BUFFER_SIZE)
                 if not data:
                     # Associate with DISCONNECT
-                    del self.clients_conns[client_id]
+                    if client_id in self.clients_conns: del self.clients_conns[client_id] 
+                    if client_id in self.clients_data: del self.clients_data[client_id]
                     client_conn.close()
-                    del self.clients_data[client_id]
+                    print(f">> client disconnect")
                     break
 
-                # Deserialize data into packet
+                # Deserialize data into a packet
                 packet = self.unpack_packet(data)
-                if self.debug:
-                    print(f"----{addr}----")
-                    print(f"Source: \t{packet.source}")
-                    print(f"Header: \t{packet.header}")
-                    print(f"Data  : \t{packet.data}")
-                    print(f"----------------------------")
 
-                packetHandler = PacketHandler(client_conn, self.clients_conns, self.clients_data, client_id, packet, self.timer)
+                # If in debug mode-> print packet data
+                if self.debug:self.print_packet_data(packet, addr)
+
+                # Send a response using the packethandler utility
+                packetHandler = PacketHandler(client_conn, self.clients_conns, 
+                                              self.clients_data, client_id, 
+                                              packet, self.timer)
                 packetHandler.handle_event()
 
             except ConnectionResetError:
-                print(f"Client: {client_id}, has closed their connection...")
-                del self.clients_conns[client_id]
-                del self.clients_data[client_id]
+                print(f">> Client: {client_id}, has closed their connection...")
+                if client_id in self.clients_conns: del self.clients_conns[client_id] 
+                if client_id in self.clients_data: del self.clients_data[client_id]
                 client_conn.close()
                 break
 
             except Exception as e:
-                # this exception is WIP
-                print(f"There was an issue with a client: {client_id}, so they are getting removed...")
-                del self.clients_conns[client_id]
-                del self.clients_data[client_id]
+                print(f">> There was an issue with a client: {client_id}, so they are getting removed...")
+                if client_id in self.clients_conns:del self.clients_conns[client_id] 
+                if client_id in self.clients_data: del self.clients_data[client_id]
                 client_conn.close()
                 break
 
     def run(self):
-        self.server_startup_banner()
+        self.server_startup_banner() # print the startup banner
 
         # main loop
         while True:
-            print("listening for new clients...")
+            print(">> Waiting for a new client to join...")
+            print(f">> Lobby Size ({len(self.clients_conns)}/{self.client_max})", end="\r\n")
 
             # client accepted -> continue
             client_conn, addr = self.server.accept()
             id = self.gen_uniquie_id(5)
-            print(f"New Client: {id}")
+            print(f">> A new client has connected with the id: {id}")
+
             # Check if lobby is full
             if len(self.clients_conns) < self.client_max:
 
+                # A broadcasted message to all connected clients
                 for key,client in self.clients_conns.items():
-                    response = Packet(source="server", header="server-message", data="Say Hello! A new client has joined!")
+                    response = Packet(source="server", header="server-message", 
+                                      data="A new client has joined")
                     response = response.serialize()
                     client.send(response)
 
+                # Append new client to list of clients
+                # Mapping id->socket connection
                 self.clients_conns[id] = client_conn
-                # Give client a thread
-                try:
-                    threading.Thread(target=self.client_thread, args=(client_conn, addr,id)).start()
-                except Exception as e:
-                    # can print error here
-                    pass
                 
-                #this will be the pLayer data
+                # Give the client a thread
+                try: threading.Thread(target=self.client_thread, args=(client_conn, addr,id)).start()
+                except Exception as e: pass # can print error here
+                
+                # Inform the client of its id
                 response = Packet(source="server", header="connected", data=id)
                 response = response.serialize()
                 self.clients_conns[id].send(response)
             else:
                 # Full lobby => no thread
-                print("rejecting client => lobby full")
+                print(">> rejecting client => lobby full")
                 data = Packet(source= "server", header="lobby-full", data=self.client_max)
                 data = data.serialize()
                 client_conn.send(data)
                 client_conn.close()
 
-            print(f"Lobby Size ({len(self.clients_conns)}/{self.client_max})")
-
     # forces server to crash by killing server connection
-    def kill(self):
-        self.server.close()
+    def kill(self): self.server.close()
 
 if __name__ == "__main__":
     server = GameServer(client_max=5,debug=True)
