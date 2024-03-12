@@ -1,6 +1,5 @@
 import socket
 from Packet import Packet
-from PlayerData import PlayerData
 
 class PacketHandler:
     def __init__(self, client_conn, clients_conns, clients_data, client_id, packet, timer):
