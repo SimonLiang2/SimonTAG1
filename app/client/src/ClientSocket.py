@@ -27,13 +27,11 @@ class ClientSocket:
         data = Packet(source=self.id, header=msg, data=content)
         data = data.serialize()
         self.socket_client.send(data)
-        pass
 
     def socket_receive_data(self):
         while True:
             response = self.socket_client.recv(4096)
             response = self.unpack_packet(response)
-            
             
             if False:
                 print("{")
@@ -51,12 +49,9 @@ class ClientSocket:
                 print("----SERVER MESSAGE----")
                 print(f"  {response.data}    ")
                 print("----------------------")
-            elif(response.header == "player-tick"):
-                self.player_data = response.data
-            elif(response.header == "timer-update"):
-                self.round_timer  = response.data
-            elif(response.header == "map-update"):
-                self.map_name = response.data
+            elif(response.header == "player-tick"): self.player_data = response.data
+            elif(response.header == "timer-update"): self.round_timer  = response.data
+            elif(response.header == "map-update"): self.map_name = response.data
 
         self.kill_connection()
         return 
