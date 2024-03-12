@@ -10,7 +10,8 @@ class PacketHandler:
         self.packet = packet
         self.timer = timer
 
-
+    # Packets recv by server should call this event
+    # Function determines proper response during event
     def handle_event(self):
         match(self.packet.header):
             case "kill-socket":
@@ -37,10 +38,13 @@ class PacketHandler:
                 response = response.serialize()
                 self.client_conn.send(response)
             case "player-leave":
-                del self.clients_data[self.client_id]
+                if self.client_id in self.clients_data: del self.clients_data[self.client_id]
                 self.clients_data = self.clients_data
-
-                
+            case _: # default case -> packet header is not known
+                print(">> The server just recieved a bad header!")
+                response = Packet(source=self.packet.source, header="bad-header", data="invalid header")
+                response = response.serialize()
+                self.client_conn.send(response)
 
     def kill_socket_event(self):
         response = Packet(source=self.packet.source, header="kill-socket", data=self.packet.data)

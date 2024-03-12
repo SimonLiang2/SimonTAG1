@@ -18,7 +18,7 @@ class GameServer:
         self.clients_data = {}
         self.clients_conns = {}
         self.client_max = client_max
-        self.debug = False
+        self.debug = debug
 
     def gen_uniquie_id(self,length):
         # Define the characters you want in the random string
@@ -33,11 +33,12 @@ class GameServer:
         banner_lines = [
             "+-------------------------------------+",
             "|       Python Tag Game Server        |",
-            "|          Starting Up...             |",
+            "|                                     |",
             "+-------------------------------------+"
         ]
-        for line in banner_lines:
-            print(line)
+        for line in banner_lines: print(line)
+
+    def print_lobby_size(self): print(f">> Lobby Size ({len(self.clients_conns)}/{self.client_max})")
 
     # Used to deserialize Packets
     def unpack_packet(self, data):
@@ -63,6 +64,7 @@ class GameServer:
                     if client_id in self.clients_data: del self.clients_data[client_id]
                     client_conn.close()
                     print(f">> client disconnect")
+                    self.print_lobby_size()
                     break
 
                 # Deserialize data into a packet
@@ -97,7 +99,6 @@ class GameServer:
         # main loop
         while True:
             print(">> Waiting for a new client to join...")
-            print(f">> Lobby Size ({len(self.clients_conns)}/{self.client_max})", end="\r\n")
 
             # client accepted -> continue
             client_conn, addr = self.server.accept()
@@ -133,12 +134,13 @@ class GameServer:
                 data = data.serialize()
                 client_conn.send(data)
                 client_conn.close()
+            self.print_lobby_size()
 
     # forces server to crash by killing server connection
     def kill(self): self.server.close()
 
 if __name__ == "__main__":
-    server = GameServer(client_max=5,debug=True)
+    server = GameServer(client_max=5,debug=False)
     server_thread = threading.Thread(target=server.run)
     server_thread.start() 
     server_thread.join() 
