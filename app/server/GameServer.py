@@ -93,17 +93,9 @@ class GameServer:
                 client_conn.close()
                 break
     
-    def update_timer(self):
-        while True: 
-            self.timer.update()
-            time.sleep(0.1)
-
     def run(self):
         self.server_startup_banner() # print the startup banner
 
-        #keeps timer ticking while server is running
-        try: threading.Thread(target=self.update_timer).start()
-        except Exception as e: pass
         # main loop
         while True:
             print(">> Waiting for a new client to join...")
