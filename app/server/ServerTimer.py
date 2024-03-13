@@ -2,7 +2,7 @@ import time as times
 import random
 
 class ServerTimer:
-    def __init__(self, time=15, wait_time=-3):
+    def __init__(self, time=45, wait_time=-3):
         self.start_time = time
         self.epoch_time = int(times.time())
         self.time = time

@@ -10,7 +10,7 @@ from ServerTimer import ServerTimer
 # Multithreaded server that can handle multiple clients
 class GameServer:
     def __init__(self, host='127.0.0.1', port=3000, client_max=5, debug=False):
-        self.timer = ServerTimer(time=15)
+        self.timer = ServerTimer(time=45)
         self.BUFFER_SIZE = 4096
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
@@ -92,10 +92,18 @@ class GameServer:
                 if client_id in self.clients_data: del self.clients_data[client_id]
                 client_conn.close()
                 break
+    
+    def update_timer(self):
+        while True: 
+            self.timer.update()
+            time.sleep(0.1)
 
     def run(self):
         self.server_startup_banner() # print the startup banner
 
+        #keeps timer ticking while server is running
+        try: threading.Thread(target=self.update_timer).start()
+        except Exception as e: pass
         # main loop
         while True:
             print(">> Waiting for a new client to join...")
@@ -140,7 +148,7 @@ class GameServer:
     def kill(self): self.server.close()
 
 if __name__ == "__main__":
-    server = GameServer(client_max=5,debug=False)
+    server = GameServer(host='127.0.0.1',client_max=5,debug=False)
     server_thread = threading.Thread(target=server.run)
     server_thread.start() 
     server_thread.join() 
