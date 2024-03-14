@@ -26,11 +26,6 @@ class PacketHandler:
                 response = Packet(source=self.packet.source, header="update-tick", data=self.round_data)
                 response = response.serialize()
                 self.client_conn.send(response)
-            case "timer-req":
-                self.round_data = self.timer.time
-                response = Packet(source=self.packet.source, header="timer-update", data=self.round_data)
-                response = response.serialize()
-                self.client_conn.send(response)
             case "map-req":
                 self.timer.time
                 map_name = self.timer.map

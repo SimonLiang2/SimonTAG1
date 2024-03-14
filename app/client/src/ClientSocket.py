@@ -52,6 +52,7 @@ class ClientSocket:
                 self.id = response.data[0]
                 self.admin = response.data[1]
             elif(response.header == "kill-socket"):
+                print("Killing Socket")
                 self.inited = False
                 break  
             elif(response.header == "lobby-full"):
