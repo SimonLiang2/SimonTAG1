@@ -28,5 +28,5 @@ while not state_machine.window_should_close:
     state_machine.current_state.update()
     state_machine.current_state.render(state_machine.window)
     pygame.display.flip()
-state_machine.client_socket.send_data("kill-socket")
+if(state_machine.client_socket): state_machine.client_socket.send_data("kill-socket")
 pygame.quit()
