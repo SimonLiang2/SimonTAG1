@@ -39,9 +39,6 @@ class GameState:
         self.objects = []
         return
     
-    def go_to_end_game(self):
-        self.state_machine.transition('endgame')
-
     def reset_map(self):
         if(not self.reset_once):
             pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
@@ -63,13 +60,16 @@ class GameState:
 
     def enter(self):
 
-        self.state_machine.client_socket = ClientSocket('127.0.0.1')
-        self.state_machine.client_socket.start_thread()
+        self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
+        if(self.state_machine.client_socket.inited):
+            self.state_machine.client_socket.start_thread()
+        else:
+            self.state_machine.transition("message","Failed To Connect to Server")
 
         pygame.mixer.music.stop()
         self.state_machine.player_score = 0
 
-        self.game_timer = GameTimer((100,200), self.go_to_end_game, time=30, color=(255,255,255))
+        self.game_timer = GameTimer((100,200),color=(255,255,255))
         pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
         
         self.state_machine.client_socket.send_data("map-req")
@@ -175,6 +175,10 @@ class GameState:
         return
 
     def update(self):
+
+        if(self.state_machine.client_socket.lobby_full):
+            self.state_machine.transition("message","Lobby Full or Round Started")
+
         self.objects = []
         self.state_machine.client_socket.send_data("timer-req")
         self.game_timer.update(self.state_machine.client_socket.round_timer) 
@@ -194,7 +198,7 @@ class GameState:
                     if event.key == pygame.K_SPACE:
                         self.debug_mode = not self.debug_mode
                     if event.key == pygame.K_ESCAPE:
-                        self.state_machine.transition("endgame")
+                        self.state_machine.transition("message","You Lose")
                 if event.type == pygame.QUIT:
                     self.state_machine.window_should_close = True
                 if event.type == pygame.MOUSEBUTTONDOWN:

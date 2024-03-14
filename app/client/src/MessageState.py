@@ -1,18 +1,19 @@
 import pygame
 
-class EndGameState:
+class MessageState:
     def __init__(self,name):
         self.name = name
         self.best_score = 0
         self.state_machine = None
         self.font_size = 50
+        self.msg = None
     
     def enter(self):
-        if(self.state_machine.player_score > self.best_score):
-            self.best_score = self.state_machine.player_score
-        print(f"Entering: {self.name}")
+        self.msg = self.state_machine.msg
     
     def leave(self):
+        pygame.mixer.Channel(0).stop()
+        pygame.mixer.Channel(1).stop()
         print(f"Leaving: {self.name}")
     
     def render(self,window=None):
@@ -20,14 +21,9 @@ class EndGameState:
         window.fill(color)
 
         font = pygame.font.SysFont('Georgia',self.font_size)
-        text = font.render(f"Your Score: {self.state_machine.player_score}", True, (255,255,255)) 
+        text = font.render(self.msg, True, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = ((self.state_machine.window_width/2), 130) 
-        window.blit(text, text_rect)
-
-        text = font.render(f"Best Score: {self.best_score}", True, (255,255,255)) 
-        text_rect = text.get_rect()
-        text_rect.center = ((self.state_machine.window_width/2), 180) 
         window.blit(text, text_rect)
 
         text = font.render(f"Hit Space to Continue...", True, (255,255,255)) 
@@ -35,11 +31,6 @@ class EndGameState:
         text_rect.center = ((self.state_machine.window_width/2)+20, 260) 
         window.blit(text, text_rect)
 
-        font = pygame.font.SysFont('Georgia',int(self.font_size/2))
-        text = font.render(f"Dev Score: {40}", True, (255,255,255)) 
-        text_rect = text.get_rect()
-        text_rect.center = (140, 40) 
-        window.blit(text, text_rect)
         
     def update(self):
         for event in pygame.event.get():
