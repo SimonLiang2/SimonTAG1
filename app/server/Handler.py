@@ -22,24 +22,26 @@ class PacketHandler:
                 response = response.serialize()
                 self.client_conn.send(response)
             
-                self.round_data = [self.timer.update(), self.timer.map]
+                self.round_data = [self.timer.time, self.timer.map]
                 response = Packet(source=self.packet.source, header="update-tick", data=self.round_data)
                 response = response.serialize()
                 self.client_conn.send(response)
             case "timer-req":
-                self.round_data = self.timer.update()
+                self.round_data = self.timer.time
                 response = Packet(source=self.packet.source, header="timer-update", data=self.round_data)
                 response = response.serialize()
                 self.client_conn.send(response)
             case "map-req":
-                self.timer.update()
+                self.timer.time
                 map_name = self.timer.map
                 response = Packet(source=self.packet.source, header="map-update", data=map_name)
                 response = response.serialize()
                 self.client_conn.send(response)
+            case "start-round":
+                self.timer.round_started = True
             case "player-leave":
                 if self.client_id in self.clients_data: del self.clients_data[self.client_id]
-                self.clients_data = self.clients_data
+                self.clients_data = self.clients_data        
             case _: # default case -> packet header is not known
                 print(">> The server just recieved a bad header!")
                 response = Packet(source=self.packet.source, header="bad-header", data="invalid header")
@@ -47,6 +49,12 @@ class PacketHandler:
                 self.client_conn.send(response)
 
     def kill_socket_event(self):
+        player_count = len(self.clients_conns.items())
+        player_count-=1
+        print(player_count)
+        if(player_count <= 0):
+            self.timer.round_started = False
+            self.timer.reset()
         response = Packet(source=self.packet.source, header="kill-socket", data=self.packet.data)
         response = response.serialize()
         self.client_conn.send(response)

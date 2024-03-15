@@ -8,6 +8,7 @@ from FlashLightUtils import Boundary,Vector,Circle
 from MapStates import gen_map, find_spawn_point;
 from CreateMaps import choose_random_map, choose_map, get_last_map
 from GameTimer import GameTimer
+from ClientSocket import ClientSocket
 
 
 SLEEPTIME = 0.1
@@ -31,6 +32,7 @@ class GameState:
         self.mouseX = 0
         self.mouseY = 0
         self.mouseB = -1
+        self.reset_once = False
         self.clock = pygame.time.Clock()
         self.debug_mode = False
         self.walls = []
@@ -41,23 +43,29 @@ class GameState:
         self.state_machine.transition('endgame')
 
     def reset_map(self):
-        pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
+        if(not self.reset_once):
+            pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
 
-        self.state_machine.client_socket.send_data("map-req")
-        time.sleep(SLEEPTIME)    
-        self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
+            self.state_machine.client_socket.send_data("map-req")
+            time.sleep(SLEEPTIME)    
+            self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
 
-        valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.player = Player(valid_x, valid_y,5)
+            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
+            self.player = Player(valid_x, valid_y,5)
 
-        self.objects = []
-        self.walls = []
-        self.gen_boundaries()
-        self.draw_map()
+            self.objects = []
+            self.walls = []
+            self.gen_boundaries()
+            self.draw_map()
+            self.reset_once = True
         return
 
 
     def enter(self):
+
+        self.state_machine.client_socket = ClientSocket('127.0.0.1')
+        self.state_machine.client_socket.start_thread()
+
         pygame.mixer.music.stop()
         self.state_machine.player_score = 0
 
@@ -84,7 +92,7 @@ class GameState:
         return
     
     def leave(self):
-        self.state_machine.client_socket.send_data("player-leave")
+        self.state_machine.client_socket.send_data("kill-socket")
         pygame.mixer.Channel(0).stop()
         pygame.mixer.Channel(1).stop()
         self.walls = []
@@ -172,20 +180,23 @@ class GameState:
         self.game_timer.update(self.state_machine.client_socket.round_timer) 
 
         if(self.game_timer.time > 0):
+            self.reset_once = False
             keys = pygame.key.get_pressed()
             self.mouseX,self.mouseY = pygame.mouse.get_pos()
             self.mouseB = pygame.mouse.get_pressed()
+
+            if(keys[pygame.K_p]):
+                if(self.state_machine.client_socket.admin):
+                    self.state_machine.client_socket.send_data("start-round")
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.debug_mode = not self.debug_mode
+                    if event.key == pygame.K_ESCAPE:
+                        self.state_machine.transition("endgame")
                 if event.type == pygame.QUIT:
                     self.state_machine.window_should_close = True
-                if event.type == pygame.KEYDOWN:
-                    key = event.key
-                    if key == pygame.K_ESCAPE:
-                        self.state_machine.transition("endgame")
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
 
@@ -198,7 +209,7 @@ class GameState:
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
         
-        elif(self.game_timer.time < -2):
+        elif(self.game_timer.time <= self.state_machine.server_time_end):
             self.reset_map()
 
         self.clock.tick(60)  

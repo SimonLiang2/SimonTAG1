@@ -1,5 +1,5 @@
 import pygame
-from ClientSocket import ClientSocket
+
 
 class StateMachine:
     def __init__(self):
@@ -10,8 +10,8 @@ class StateMachine:
         self.window_width = 1000
         self.window_height = 600
         self.player_score = 0
-        self.client_socket = ClientSocket('127.0.0.1')
-        self.client_socket.start_thread()
+        self.server_time_end = -2
+        self.client_socket = None
         self.window = pygame.display.set_mode((self.window_width, self.window_height))
         pygame.display.set_caption("Tag Game")
         return

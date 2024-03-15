@@ -10,6 +10,7 @@ class ClientSocket:
         self.socket_client.connect((host, port))
         self.listening = listening
         self.id = None
+        self.admin = False
         self.player_data = None
         self.round_timer = 90
         self.map_name = "map_1"
@@ -24,9 +25,9 @@ class ClientSocket:
         self.socket_client.close()
 
     def send_data(self,msg,content=None):
-        data = Packet(source=self.id, header=msg, data=content)
-        data = data.serialize()
-        self.socket_client.send(data)
+            data = Packet(source=self.id, header=msg, data=content)
+            data = data.serialize()
+            self.socket_client.send(data)
 
     def socket_receive_data(self):
         while True:
@@ -41,7 +42,8 @@ class ClientSocket:
                 print("}")
         
             if(response.header == "connected"):
-                self.id = response.data
+                self.id = response.data[0]
+                self.admin = response.data[1]
             elif(response.header == "kill-socket" or response.header == "lobby-full"):
                 print("Im DEAD")
                 break      
