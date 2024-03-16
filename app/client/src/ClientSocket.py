@@ -59,6 +59,8 @@ class ClientSocket:
                 self.lobby_full = True
                 self.inited = False
                 break
+            elif(response.header == "become-admin"):
+                self.admin = True
             elif(response.header == "server-message"):
                 print("----SERVER MESSAGE----")
                 print(f"  {response.data}    ")

@@ -88,9 +88,12 @@ class GameState:
     
     def leave(self):
         # make sure this socket dies
-        for i in range(3):
-            self.state_machine.client_socket.send_data("kill-socket")
-            time.sleep(SLEEPTIME)  
+        if(self.state_machine.client_socket.admin and not self.round_started):
+            self.state_machine.client_socket.send_data("get-admin")
+            time.sleep(SLEEPTIME)    
+
+        self.state_machine.client_socket.send_data("kill-socket")
+        time.sleep(SLEEPTIME)  
 
         pygame.mixer.Channel(0).stop()
         pygame.mixer.Channel(1).stop()

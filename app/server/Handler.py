@@ -36,7 +36,17 @@ class PacketHandler:
                 self.timer.round_started = True
             case "player-leave":
                 if self.client_id in self.clients_data: del self.clients_data[self.client_id]
-                self.clients_data = self.clients_data        
+                self.clients_data = self.clients_data  
+            case "get-admin":
+                 players = self.clients_conns.items()
+                 player_count = len(self.clients_conns.items())
+                 if(player_count > 1):
+                         for key,client in players:
+                                if(key != self.packet.source):
+                                      response = Packet(source="Server", header="become-admin", data=None)
+                                      response = response.serialize()
+                                      client.send(response)
+                                      break
             case _: # default case -> packet header is not known
                 print(">> The server just recieved a bad header!")
                 response = Packet(source=self.packet.source, header="bad-header", data="invalid header")
