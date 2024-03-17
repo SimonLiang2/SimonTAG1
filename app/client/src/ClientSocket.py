@@ -10,6 +10,7 @@ class ClientSocket:
         self.id = None
         self.admin = False
         self.player_data = None
+        self.round_started = False
         self.round_timer = 90
         self.map_name = "map_1"
         self.lobby_full  = False
@@ -65,6 +66,7 @@ class ClientSocket:
                 print("----SERVER MESSAGE----")
                 print(f"  {response.data}    ")
                 print("----------------------")
+            elif(response.header == "start-round"): self.round_started = True
             elif(response.header == "player-tick"): self.player_data = response.data
             elif(response.header == "timer-update"): self.round_timer  = response.data
             elif(response.header == "map-update"): self.map_name = response.data

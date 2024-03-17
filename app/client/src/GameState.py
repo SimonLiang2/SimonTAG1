@@ -60,7 +60,6 @@ class GameState:
 
 
     def enter(self):
-        self.round_started = False
         self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
         if(self.state_machine.client_socket.inited):
             self.state_machine.client_socket.start_thread()
@@ -164,8 +163,22 @@ class GameState:
         res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
+        text_msg = "Waiting To Start Match."
+        text_col = (255,255,255)
+
+        if(self.state_machine.client_socket.admin):
+            text_msg = "Hit P to Start Match..."
         if(self.debug_mode):
+            text_col = (0,0,0)
             window.blit(self.map_img, (0,0))
+
+        if(not self.round_started):
+                font = pygame.font.SysFont('Georgia',30)
+                text = font.render(text_msg, True, text_col) 
+                text_rect = text.get_rect()
+                text_rect.center = (160, 30) 
+                window.blit(text, text_rect)
+
         self.game_timer.render(window,self.debug_mode,self.state_machine.window_width)
                        
         self.player.render(window,self.walls,self.objects)
@@ -177,6 +190,9 @@ class GameState:
         return
 
     def update(self):
+        
+        #dont ask...
+        self.round_started = self.state_machine.client_socket.round_started
 
         #Prevent from Joining on lobby full
         if(self.state_machine.client_socket.lobby_full):

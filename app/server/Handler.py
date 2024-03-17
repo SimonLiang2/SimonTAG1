@@ -33,7 +33,12 @@ class PacketHandler:
                 response = response.serialize()
                 self.client_conn.send(response)
             case "start-round":
+                players = self.clients_conns.items()
                 self.timer.round_started = True
+                for key,client in players:
+                        response = Packet(source="Server", header="start-round", data=None)
+                        response = response.serialize()
+                        client.send(response)
             case "player-leave":
                 if self.client_id in self.clients_data: del self.clients_data[self.client_id]
                 self.clients_data = self.clients_data  
