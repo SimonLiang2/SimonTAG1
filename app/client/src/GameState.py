@@ -32,12 +32,14 @@ class GameState:
         self.mouseX = 0
         self.mouseY = 0
         self.mouseB = -1
+        self.saved_tag = False
         self.reset_once = False
         self.clock = pygame.time.Clock()
         self.debug_mode = False
         self.walls = []
         self.objects = []
         self.round_started = False
+        self.tagged_player = None
         return
     
     def reset_map(self):
@@ -49,7 +51,11 @@ class GameState:
             self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
 
             valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-            self.player = Player(valid_x, valid_y,5)
+            if self.player.tagged:
+                self.player = Player(valid_x,valid_y,5)
+                self.player.tagged = True
+            else:
+                self.player = Player(valid_x, valid_y,5)
 
             self.objects = []
             self.walls = []
@@ -190,7 +196,10 @@ class GameState:
         return
 
     def update(self):
-        
+        if(self.state_machine.client_socket.it_flag):
+            self.player.tagged = True
+            self.state_machine.client_socket.it_flag = False
+
         #dont ask...
         self.round_started = self.state_machine.client_socket.round_started
 
@@ -231,13 +240,29 @@ class GameState:
                     pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
 
             pdata = self.state_machine.client_socket.player_data
+            col = (255,255,255)
             if(pdata):
                 for key,data in pdata.items():
                     if(key != self.state_machine.client_socket.id):
-                        self.objects.append(NPC(data[0],data[1],5))
-                
+                        if(data[2]): 
+                            self.tagged_player = [data[0],data[1],5]
+                            col = (255,0,0)
+                        self.objects.append(NPC(data[0],data[1],5,col))
+
+            
+            if(self.round_started):
+                if(self.tagged_player != None):
+                    pass
+                    # get distace betwee tagged player and current player
+                    # if distance is less than the both radius this player.tagged = true
+                else:
+                    for player in self.objects:
+                        pass
+                        # get distace betwee tagged player and current player
+                        # if distance is less than the both radius this player.tagged = false
+
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
-            self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
+            self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y,self.player.tagged])
         
         elif(self.game_timer.time <= self.state_machine.server_time_end):
             self.reset_map()
