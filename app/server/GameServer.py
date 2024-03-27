@@ -96,6 +96,12 @@ class GameServer:
     def update_timer(self):
         while True: 
                 self.timer.update()
+                for key,client in self.clients_conns.items():
+                    self.round_data = self.timer.time
+                    response = Packet(source="server", header="timer-update", data=self.round_data)
+                    response = response.serialize()
+                    client.send(response)
+                time.sleep(1)
 
     def run(self):
         self.server_startup_banner() # print the startup banner

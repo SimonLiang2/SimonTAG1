@@ -37,11 +37,9 @@ class GameState:
         self.debug_mode = False
         self.walls = []
         self.objects = []
+        self.round_started = False
         return
     
-    def go_to_end_game(self):
-        self.state_machine.transition('endgame')
-
     def reset_map(self):
         if(not self.reset_once):
             pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
@@ -62,14 +60,16 @@ class GameState:
 
 
     def enter(self):
-
-        self.state_machine.client_socket = ClientSocket('127.0.0.1')
-        self.state_machine.client_socket.start_thread()
+        self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
+        if(self.state_machine.client_socket.inited):
+            self.state_machine.client_socket.start_thread()
+        else:
+            self.state_machine.transition("message","Failed To Connect to Server")
 
         pygame.mixer.music.stop()
         self.state_machine.player_score = 0
 
-        self.game_timer = GameTimer((100,200), self.go_to_end_game, time=30, color=(255,255,255))
+        self.game_timer = GameTimer((100,200),color=(255,255,255))
         pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
         
         self.state_machine.client_socket.send_data("map-req")
@@ -81,18 +81,19 @@ class GameState:
         self.player = Player(valid_x, valid_y,5)
         
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.npc = NPC(4*self.box_resolution,7*self.box_resolution,5)
-        self.objects.append(self.npc)
-
         self.gen_boundaries()
         self.draw_map()
-        self.player.tagged = True
-        self.npc.tagged = False
-        
         return
     
     def leave(self):
+        # make sure this socket dies
+        if(self.state_machine.client_socket.admin and not self.round_started):
+            self.state_machine.client_socket.send_data("get-admin")
+            time.sleep(SLEEPTIME)    
+
         self.state_machine.client_socket.send_data("kill-socket")
+        time.sleep(SLEEPTIME)  
+
         pygame.mixer.Channel(0).stop()
         pygame.mixer.Channel(1).stop()
         self.walls = []
@@ -162,8 +163,22 @@ class GameState:
         res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
+        text_msg = "Waiting To Start Match."
+        text_col = (255,255,255)
+
+        if(self.state_machine.client_socket.admin):
+            text_msg = "Hit P to Start Match..."
         if(self.debug_mode):
+            text_col = (0,0,0)
             window.blit(self.map_img, (0,0))
+
+        if(not self.round_started):
+                font = pygame.font.SysFont('Georgia',30)
+                text = font.render(text_msg, True, text_col) 
+                text_rect = text.get_rect()
+                text_rect.center = (160, 30) 
+                window.blit(text, text_rect)
+
         self.game_timer.render(window,self.debug_mode,self.state_machine.window_width)
                        
         self.player.render(window,self.walls,self.objects)
@@ -175,8 +190,17 @@ class GameState:
         return
 
     def update(self):
+        
+        #dont ask...
+        self.round_started = self.state_machine.client_socket.round_started
+
+        #Prevent from Joining on lobby full
+        if(self.state_machine.client_socket.lobby_full):
+            self.state_machine.transition("message","Lobby Full or Round Started")
+
         self.objects = []
-        self.state_machine.client_socket.send_data("timer-req")
+        self.game_timer.time = 10
+
         self.game_timer.update(self.state_machine.client_socket.round_timer) 
 
         if(self.game_timer.time > 0):
@@ -185,16 +209,22 @@ class GameState:
             self.mouseX,self.mouseY = pygame.mouse.get_pos()
             self.mouseB = pygame.mouse.get_pressed()
 
-            if(keys[pygame.K_p]):
-                if(self.state_machine.client_socket.admin):
-                    self.state_machine.client_socket.send_data("start-round")
-
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.debug_mode = not self.debug_mode
                     if event.key == pygame.K_ESCAPE:
-                        self.state_machine.transition("endgame")
+                        if(self.round_started):
+                            self.state_machine.transition("message","You Lose")
+                        else:
+                            self.state_machine.transition("message","Leaving Lobby")
+                    if event.key == pygame.K_p:
+                        if(self.state_machine.client_socket.admin and not self.round_started):
+                            self.round_started = True
+                            for i in range(2):
+                                self.state_machine.client_socket.send_data("start-round")
+                                time.sleep(SLEEPTIME)
+
                 if event.type == pygame.QUIT:
                     self.state_machine.window_should_close = True
                 if event.type == pygame.MOUSEBUTTONDOWN:

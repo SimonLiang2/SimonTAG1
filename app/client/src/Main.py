@@ -1,7 +1,7 @@
 import pygame
 from StateMachine import StateMachine
 from GameState import GameState
-from EndGameState import EndGameState
+from MessageState import MessageState
 from MainMenu import MainMenu
 from CreditsState import CreditsState
 from SettingsState import SettingsState
@@ -11,7 +11,7 @@ import random as r
 state_machine = StateMachine()
 game_state = GameState("game")
 menu_state = MainMenu("menu")
-end_state = EndGameState("endgame")
+end_state = MessageState("message")
 credits_state = CreditsState("credits")
 settings_state = SettingsState("settings")
 info_state = InfoState("info")

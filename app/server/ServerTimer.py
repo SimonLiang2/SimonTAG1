@@ -15,7 +15,6 @@ class ServerTimer:
         return (f"map_{str(num)}")
 
     def tick(self):
-        print(self.time)
         if self.time > self.wait_time:
             self.time -= 1
             if self.time == 0: print(">> TIME IS UP!")
@@ -28,8 +27,7 @@ class ServerTimer:
         if(self.round_started):
             if self.epoch_time < int(times.time()):
                 self.tick()
-                self.epoch_time = int(times.time())
-            
+                self.epoch_time = int(times.time())   
         return self.time
 
     def reset(self):
