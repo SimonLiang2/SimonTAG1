@@ -13,12 +13,25 @@ class SettingsState:
     
     def leave(self):
         print(f"Leaving: {self.name}")
-
-    def create_name(self):
-        #Returns a rectangle
-        name = pygame.Rect(self.rectX,self.rectY,self.width,self.height)
-        return name
     
+    # User has selected the play button
+    def sound_pressed(self):
+        #time.sleep(0.4)
+        self.state_machine.transition("sound")
+        #print("PLAY PRESSED")
+
+    # User has selected the credits button
+    def character_pressed(self):
+        #time.sleep(0.4)
+        self.state_machine.transition("character")
+        #print("CREDITS PRESSED")
+
+    # User has selected the quit button
+    def binds_pressed(self):
+        #time.sleep(0.4)
+        self.state_machine.transition("key binds")
+        #print("KEY BINDS PRESSED")
+
     def render(self,window=None):
         color = (0, 0, 0)
         window.fill(color)
