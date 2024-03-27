@@ -80,19 +80,19 @@ class MainMenu:
         time.sleep(0.4)
         self.state_machine.transition("game")
         #pygame.mixer.music.stop()
-        print("PLAY PRESSED")
+        #print("PLAY PRESSED")
 
     # User has selected the credits button
     def credits_pressed(self):
         self.state_machine.transition("credits")
-        print("CREDITS PRESSED")
+        #print("CREDITS PRESSED")
 
     # User has selected the quit button
     def quit_pressed(self):
         # Send signal to the state machine to close windows
         time.sleep(0.4)
         self.state_machine.window_should_close = True
-        print("QUIT PRESSED")
+        #print("QUIT PRESSED")
 
         # Creates and returns a title logo
     def create_image(self, image_path, rescale=1):
@@ -205,9 +205,9 @@ class MainMenu:
                     self.active_button_idx = 2
                     self.buttons[self.active_button_idx].pressed()
                 elif (click_pos[0] >= 19 and click_pos[0] <= 78) and (click_pos[1] >= 525 and click_pos[0] <= 586):
-                    print("Settings Icon Clicked")
+                    #print("Settings Icon Clicked")
                     self.state_machine.transition("settings")
                 elif (current_mouse_pos[0] >= 100 and current_mouse_pos[0] <= 147) and (current_mouse_pos[1] >= 533 and current_mouse_pos[0] <= 588):
-                    print("Info Icon Clicked")
+                    #print("Info Icon Clicked")
                     self.state_machine.transition("info")
-                print(f"Mouseclick at: {click_pos}")
+                #print(f"Mouseclick at: {click_pos}")

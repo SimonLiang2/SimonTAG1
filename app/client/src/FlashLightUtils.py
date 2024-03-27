@@ -149,8 +149,8 @@ class Ray:
                  pt1 = Vector(px,py)
                  pt2 = self.reverse_cast_circle(px,py,circle)
                  return [pt1,pt2]
-             px += dx 
-             py += dy 
+             px += dx * 2
+             py += dy * 2
          return  
     
     def reverse_cast_circle(self,px,py,circle):
@@ -165,7 +165,7 @@ class Ray:
                     if(d >= 0):
                         pt1 = Vector(px,py)
                         return pt1
-                    px += dx
+                    px += dx 
                     py += dy
              return    
         

@@ -8,7 +8,7 @@ class MenuButton:
         self.scale = scale
 
     def pressed(self):
-        print(f"{self.name} has been pressed")
+        #print(f"{self.name} has been pressed")
         self.pressed_func()
 
     def create_button(self, active=False):

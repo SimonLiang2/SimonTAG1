@@ -8,13 +8,21 @@ from FlashLightUtils import Boundary,Vector,Circle
 from MapStates import gen_map, find_spawn_point;
 from CreateMaps import choose_random_map, choose_map, get_last_map
 from GameTimer import GameTimer
+from ClientSocket import ClientSocket
 
+
+SLEEPTIME = 0.1
 class GameState:
     def __init__(self,name):
+        pygame.mixer.init()
         self.bg_music_path = 'app/client/src/assets/music/gamemusic.mp3'
+        self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
         self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
+        self.bg_music = pygame.mixer.Sound(self.bg_music_path)
+        self.bg_music.set_volume(0.3)
+        self.game_timer = None
+        self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
         self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
-        self.flashlight_sound.set_volume(2)
         self.name = name
         self.state_machine = None
         self.player = None
@@ -24,65 +32,70 @@ class GameState:
         self.mouseX = 0
         self.mouseY = 0
         self.mouseB = -1
+        self.reset_once = False
         self.clock = pygame.time.Clock()
         self.debug_mode = False
-        self.score = 0
         self.walls = []
         self.objects = []
-        self.epoch_time = int(time.time())
+        self.round_started = False
         return
     
-    def go_to_menu(self):
-        self.state_machine.transition('menu')
-
     def reset_map(self):
-        self.player.flash_light.draw_circle = False
-        self.map = choose_random_map("maps.json")
-        valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.npc = NPC(valid_x,valid_y,5)
-        self.objects = []
-        self.objects.append(self.npc)
-        self.walls = []
-        self.gen_boundaries()
-        self.draw_map()
-        if(self.get_val_from_map(self.player.x/self.box_resolution,self.player.y/self.box_resolution) != 0):
+        if(not self.reset_once):
+            pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
+
+            self.state_machine.client_socket.send_data("map-req")
+            time.sleep(SLEEPTIME)    
+            self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
+
             valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
             self.player = Player(valid_x, valid_y,5)
-        self.player.tagged = True
-        self.npc.tagged = False
-        self.score+=1
+
+            self.objects = []
+            self.walls = []
+            self.gen_boundaries()
+            self.draw_map()
+            self.reset_once = True
         return
 
 
     def enter(self):
-        self.debug_mode = False
-        self.score = 0
-        self.game_timer = GameTimer((100,200), self.go_to_menu, time=30, color=(255,255,255))
-        pygame.mixer.init()
-        pygame.mixer.music.load(self.bg_music_path)
-        pygame.mixer.music.set_volume(0.3)
-        pygame.mixer.music.play(loops=-1)
-        #self.map = choose_random_map("maps.json")
-        self.map = choose_map("maps.json",'map_1')
-        print(f"Entering: {self.name}")
+        self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
+        if(self.state_machine.client_socket.inited):
+            self.state_machine.client_socket.start_thread()
+        else:
+            self.state_machine.transition("message","Failed To Connect to Server")
+
+        pygame.mixer.music.stop()
+        self.state_machine.player_score = 0
+
+        self.game_timer = GameTimer((100,200),color=(255,255,255))
+        pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
+        
+        self.state_machine.client_socket.send_data("map-req")
+        time.sleep(SLEEPTIME)    
+
+        self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
 
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.player = Player(valid_x, valid_y,5)
         
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-        self.npc = NPC(4*self.box_resolution,7*self.box_resolution,5)
-        self.objects.append(self.npc)
-
         self.gen_boundaries()
         self.draw_map()
-        self.player.tagged = True
-        self.npc.tagged = False
-        
         return
     
     def leave(self):
-        print(f"Score: {self.score}")
-        print(f"Leaving: {self.name}")
+        # make sure this socket dies
+        if(self.state_machine.client_socket.admin and not self.round_started):
+            self.state_machine.client_socket.send_data("get-admin")
+            time.sleep(SLEEPTIME)    
+
+        self.state_machine.client_socket.send_data("kill-socket")
+        time.sleep(SLEEPTIME)  
+
+        pygame.mixer.Channel(0).stop()
+        pygame.mixer.Channel(1).stop()
         self.walls = []
         self.objects = []
         return
@@ -147,12 +160,27 @@ class GameState:
         return
 
     def render(self,window=None):
-        self.game_timer.update()
         res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
+        text_msg = "Waiting To Start Match."
+        text_col = (255,255,255)
+
+        if(self.state_machine.client_socket.admin):
+            text_msg = "Hit P to Start Match..."
         if(self.debug_mode):
+            text_col = (0,0,0)
             window.blit(self.map_img, (0,0))
+
+        if(not self.round_started):
+                font = pygame.font.SysFont('Georgia',30)
+                text = font.render(text_msg, True, text_col) 
+                text_rect = text.get_rect()
+                text_rect.center = (160, 30) 
+                window.blit(text, text_rect)
+
+        self.game_timer.render(window,self.debug_mode,self.state_machine.window_width)
+                       
         self.player.render(window,self.walls,self.objects)
         if(self.debug_mode):
             for wall in self.walls:
@@ -162,21 +190,57 @@ class GameState:
         return
 
     def update(self):
-        keys = pygame.key.get_pressed()
-        self.mouseX,self.mouseY = pygame.mouse.get_pos()
-        self.mouseB = pygame.mouse.get_pressed()
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.debug_mode = not self.debug_mode
-            if event.type == pygame.QUIT:
-                self.state_machine.window_should_close = True
-        self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
         
-        for obj in self.objects:
-            d = math.sqrt(math.pow(obj.x-self.player.position[0],2) + math.pow(obj.y-self.player.position[1],2))
-            if(d<(self.player.radius+obj.radius)+5):
-                self.reset_map()  
+        #dont ask...
+        self.round_started = self.state_machine.client_socket.round_started
+
+        #Prevent from Joining on lobby full
+        if(self.state_machine.client_socket.lobby_full):
+            self.state_machine.transition("message","Lobby Full or Round Started")
+
+        self.objects = []
+        self.game_timer.time = 10
+
+        self.game_timer.update(self.state_machine.client_socket.round_timer) 
+
+        if(self.game_timer.time > 0):
+            self.reset_once = False
+            keys = pygame.key.get_pressed()
+            self.mouseX,self.mouseY = pygame.mouse.get_pos()
+            self.mouseB = pygame.mouse.get_pressed()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.debug_mode = not self.debug_mode
+                    if event.key == pygame.K_ESCAPE:
+                        if(self.round_started):
+                            self.state_machine.transition("message","You Lose")
+                        else:
+                            self.state_machine.transition("message","Leaving Lobby")
+                    if event.key == pygame.K_p:
+                        if(self.state_machine.client_socket.admin and not self.round_started):
+                            self.round_started = True
+                            for i in range(2):
+                                self.state_machine.client_socket.send_data("start-round")
+                                time.sleep(SLEEPTIME)
+
+                if event.type == pygame.QUIT:
+                    self.state_machine.window_should_close = True
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
+
+            pdata = self.state_machine.client_socket.player_data
+            if(pdata):
+                for key,data in pdata.items():
+                    if(key != self.state_machine.client_socket.id):
+                        self.objects.append(NPC(data[0],data[1],5))
+                
+            self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
+            self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
+        
+        elif(self.game_timer.time <= self.state_machine.server_time_end):
+            self.reset_map()
 
         self.clock.tick(60)  
         return
