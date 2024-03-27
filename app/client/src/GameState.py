@@ -57,6 +57,7 @@ class GameState:
             else:
                 self.player = Player(valid_x, valid_y,5)
 
+
             self.objects = []
             self.walls = []
             self.gen_boundaries()
@@ -252,12 +253,28 @@ class GameState:
             
             if(self.round_started):
                 if(self.tagged_player != None):
-                    pass
+                    d = math.sqrt(abs(math.pow(self.tagged_player[0]-self.player.x,2)) + abs(math.pow(self.tagged_player[1]-self.player.y,2)))
+                    if(d<self.player.radius+self.tagged_player[2]):
+                        self.player.tagged = True
+                        self.tagged_player = None
+                        #self.tagged_player = [self.player.x,self.player.y,5]
+
+                        
+                    
                     # get distace betwee tagged player and current player
                     # if distance is less than the both radius this player.tagged = true
                 else:
-                    for player in self.objects:
-                        pass
+                    if self.player.tagged:
+                        for player in self.objects:
+                            d = math.sqrt(abs(math.pow(player.x-self.player.position[0],2)) + abs(math.pow(player.y-self.player.position[1],2)))
+                            if(d<self.player.radius+player.radius):
+                                self.player.tagged = False
+                                valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
+                                self.player = Player(valid_x, valid_y,5)
+                                
+                                #self.tagged_player = [player.x,player.y,5]
+
+                        
                         # get distace betwee tagged player and current player
                         # if distance is less than the both radius this player.tagged = false
 
