@@ -257,12 +257,9 @@ class GameState:
                     if(d<self.player.radius+self.tagged_player[2]):
                         self.player.tagged = True
                         self.tagged_player = None
-                        #self.tagged_player = [self.player.x,self.player.y,5]
-
-                        
                     
-                    # get distace betwee tagged player and current player
-                    # if distance is less than the both radius this player.tagged = true
+                    # get distace betwee tagged player and client player
+                    # if distance is less than the both radius client player.tagged = true
                 else:
                     if self.player.tagged:
                         for player in self.objects:
@@ -271,12 +268,9 @@ class GameState:
                                 self.player.tagged = False
                                 valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
                                 self.player = Player(valid_x, valid_y,5)
-                                
-                                #self.tagged_player = [player.x,player.y,5]
-
                         
-                        # get distace betwee tagged player and current player
-                        # if distance is less than the both radius this player.tagged = false
+                        # get distace between tagged player and client player
+                        # if distance is less than the both radius client player.tagged = false
 
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y,self.player.tagged])
