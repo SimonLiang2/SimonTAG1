@@ -54,9 +54,13 @@ class GameState:
             if self.player.tagged:
                 self.player = Player(valid_x,valid_y,5)
                 self.player.tagged = True
+
+                #comment this out if you want the tagger to keep playing
+                #self.state_machine.transition("message","You Lose")
             else:
                 self.player = Player(valid_x, valid_y,5)
-
+                print ("You Survived...")
+            self.tagged_player = None
 
             self.objects = []
             self.walls = []
@@ -249,6 +253,7 @@ class GameState:
                             self.tagged_player = [data[0],data[1],5]
                             col = (255,0,0)
                         self.objects.append(NPC(data[0],data[1],5,col))
+                        col = (255,255,255)
 
             
             if(self.round_started):
