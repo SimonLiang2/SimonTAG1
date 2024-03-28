@@ -56,7 +56,7 @@ class GameState:
                 self.player.tagged = True
 
                 #comment this out if you want the tagger to keep playing
-                #self.state_machine.transition("message","You Lose")
+                self.state_machine.transition("message","You Lose")
             else:
                 self.player = Player(valid_x, valid_y,5)
                 print ("You Survived...")
