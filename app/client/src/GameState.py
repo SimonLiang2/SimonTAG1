@@ -19,7 +19,6 @@ class GameState:
         self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
         self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
         self.bg_music = pygame.mixer.Sound(self.bg_music_path)
-        self.bg_music.set_volume(0.3 * self.state_machine.master_volume)
         self.game_timer = None
         self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
         self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
@@ -38,7 +37,8 @@ class GameState:
         self.walls = []
         self.objects = []
         self.round_started = False
-        return
+        
+
     
     def reset_map(self):
         if(not self.reset_once):
@@ -61,6 +61,7 @@ class GameState:
 
     def enter(self):
         self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
+        self.bg_music.set_volume(0.3 * self.state_machine.master_volume)
         if(self.state_machine.client_socket.inited):
             self.state_machine.client_socket.start_thread()
         else:
