@@ -15,6 +15,7 @@ class StateMachine:
         self.msg = None
         self.ip_address = '127.0.0.1'
         self.window = pygame.display.set_mode((self.window_width, self.window_height))
+        self.master_volume = 0.50
         pygame.display.set_caption("Tag Game")
         return
 

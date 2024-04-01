@@ -1,7 +1,7 @@
 import pygame
 import time
 
-class SettingsState:
+class VolumeState:
     def __init__(self,name,color=(0,0,0)):
         self.name = name
         self.state_machine = None
@@ -16,45 +16,37 @@ class SettingsState:
         print(f"Leaving: {self.name}")
     
     # User has selected the play button
-    def sound_pressed(self):
+    def volume_up_pressed(self):
         time.sleep(0.4)
-        self.state_machine.transition("sound")
-        #print("PLAY PRESSED")
+        print("VOLUME UP PRESSED")
 
     # User has selected the credits button
     def character_pressed(self):
-        #time.sleep(0.4)
-        #self.state_machine.transition("character")
-        print("CREDITS PRESSED")
-
-    # User has selected the quit button
-    def binds_pressed(self):
-        #time.sleep(0.4)
-        #self.state_machine.transition("key binds")
-        print("KEY BINDS PRESSED")
+        time.sleep(0.4)
+        print("VOLUME DOWN PRESSED")
 
     def render(self,window=None):
         color = (0, 0, 0)
         window.fill(color)
 
         font = pygame.font.SysFont('Georgia',self.font_size_title)
-        text = font.render("SETTINGS", True, self.color, (255,255,255)) 
+        text = font.render("CHANGE VOLUME", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, self.state_machine.window_height//6) 
         window.blit(text, text_rect)
 
         font = pygame.font.SysFont('Georgia',self.font_size_button)
-        text = font.render("Sound", True, self.color, (255,255,255)) 
+        text = font.render("Volume Up", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 250) 
         window.blit(text, text_rect)
 
-        text = font.render("Character", True, self.color, (255,255,255)) 
+        text = font.render("Volume Down", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 325) 
         window.blit(text, text_rect)
 
-        text = font.render("Key Binds", True, self.color, (255,255,255)) 
+        text = font.render((f"Master Volume: {round(self.state_machine.master_volume * 100,2)}"), True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 400) 
         window.blit(text, text_rect)
@@ -68,7 +60,7 @@ class SettingsState:
             elif event.type == pygame.KEYDOWN:
                 key = event.key
                 if key == pygame.K_ESCAPE:
-                    self.state_machine.transition("menu")
+                    self.state_machine.transition("settings")
             elif event.type == pygame.MOUSEBUTTONDOWN:  # Handle mouse button clicks
                 self.last_input_method = 'mouse'  # Update last input method to mouse on click
                 #self.quit_sound.play()
@@ -76,14 +68,12 @@ class SettingsState:
                 click_pos = pygame.mouse.get_pos()
 
                 print(click_pos)
-                
-                # Check if the click is within the bounds of the buttons and act accordingly
-                if (click_pos[0] >= 428 and click_pos[0] <= 570) and (click_pos[1] >= 219 and click_pos[1] <= 276):
-                    #print("Sound Clicked")
-                    self.state_machine.transition("volume")
-                elif (current_mouse_pos[0] >= 392 and current_mouse_pos[0] <= 608) and (current_mouse_pos[1] >= 297 and current_mouse_pos[1] <= 353):
-                    #print("Char Clicked")
-                    self.state_machine.transition("character")
-                elif (current_mouse_pos[0] >= 388 and current_mouse_pos[0] <= 612) and (current_mouse_pos[1] >= 371 and current_mouse_pos[1] <= 428):
-                    #print("KeyBinds Clicked")
-                    self.state_machine.transition("binds")
+
+                if (click_pos[0] >= 375 and click_pos[0] <= 625) and (click_pos[1] >= 222 and click_pos[1] <= 278):
+                    print("Volume Up Clicked")
+                    if(self.state_machine.master_volume < .9):
+                        self.state_machine.master_volume += .1
+                elif (current_mouse_pos[0] >= 344 and current_mouse_pos[0] <= 657) and (current_mouse_pos[1] >= 297 and current_mouse_pos[1] <= 353):
+                    print("Volume Down Clicked")
+                    if(self.state_machine.master_volume > .1):
+                        self.state_machine.master_volume -= .1
