@@ -13,7 +13,7 @@ def radianToDegree(radian):
 class FlashLight:
      def __init__(self,x,y,ray_increment):
          self.pos = Vector(x,y)
-         self.ray_count = 2  # low resolution
+         self.ray_count = 1  # low resolution
          self.rays = []
          self.divisor = ray_increment
          self.draw_circle = False

@@ -34,6 +34,7 @@ class GameState:
         self.mouseB = -1
         self.saved_tag = False
         self.reset_once = False
+        self.check_it_once = False
         self.clock = pygame.time.Clock()
         self.debug_mode = False
         self.walls = []
@@ -42,6 +43,11 @@ class GameState:
         self.tagged_player = None
         return
     
+    def check_it(self):
+        if(not self.check_it_once and self.state_machine.client_socket.admin):
+            self.check_it_once = True
+            self.state_machine.client_socket.send_data("get-new-tagger")
+
     def reset_map(self):
         if(not self.reset_once):
             pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
@@ -54,7 +60,6 @@ class GameState:
             if self.player.tagged:
                 self.player = Player(valid_x,valid_y,5)
                 self.player.tagged = True
-
                 #comment this out if you want the tagger to keep playing
                 self.state_machine.transition("message","You Lose")
             else:
@@ -66,11 +71,14 @@ class GameState:
             self.walls = []
             self.gen_boundaries()
             self.draw_map()
+            self.players_in_game = 0
             self.reset_once = True
         return
 
 
     def enter(self):
+        self.walls = []
+        self.objects = []
         self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
         if(self.state_machine.client_socket.inited):
             self.state_machine.client_socket.start_thread()
@@ -98,7 +106,7 @@ class GameState:
     
     def leave(self):
         # make sure this socket dies
-        if(self.state_machine.client_socket.admin and not self.round_started):
+        if(self.state_machine.client_socket.admin):
             self.state_machine.client_socket.send_data("get-admin")
             time.sleep(SLEEPTIME)    
 
@@ -207,6 +215,7 @@ class GameState:
 
         #dont ask...
         self.round_started = self.state_machine.client_socket.round_started
+        self.state_machine.client_socket.round_started
 
         #Prevent from Joining on lobby full
         if(self.state_machine.client_socket.lobby_full):
@@ -219,6 +228,7 @@ class GameState:
 
         if(self.game_timer.time > 0):
             self.reset_once = False
+            self.check_it_once = False
             keys = pygame.key.get_pressed()
             self.mouseX,self.mouseY = pygame.mouse.get_pos()
             self.mouseB = pygame.mouse.get_pressed()
@@ -233,11 +243,12 @@ class GameState:
                         else:
                             self.state_machine.transition("message","Leaving Lobby")
                     if event.key == pygame.K_p:
-                        if(self.state_machine.client_socket.admin and not self.round_started):
-                            self.round_started = True
-                            for i in range(2):
-                                self.state_machine.client_socket.send_data("start-round")
-                                time.sleep(SLEEPTIME)
+                        if(self.players_in_game > 1):
+                            if(self.state_machine.client_socket.admin and not self.round_started):
+                                self.round_started = True
+                                for i in range(2):
+                                    self.state_machine.client_socket.send_data("start-round")
+                                    time.sleep(SLEEPTIME)
 
                 if event.type == pygame.QUIT:
                     self.state_machine.window_should_close = True
@@ -247,6 +258,9 @@ class GameState:
             pdata = self.state_machine.client_socket.player_data
             col = (255,255,255)
             if(pdata):
+                self.players_in_game = len(pdata.items())
+                if(self.players_in_game == 1 and self.round_started):
+                    self.state_machine.transition("message","YOU WIN YOURE AWESOME")
                 for key,data in pdata.items():
                     if(key != self.state_machine.client_socket.id):
                         if(data[2]): 
@@ -282,6 +296,9 @@ class GameState:
         
         elif(self.game_timer.time <= self.state_machine.server_time_end):
             self.reset_map()
-
+            time.sleep(SLEEPTIME * 2)
+            self.check_it()
+       
+        
         self.clock.tick(60)  
         return

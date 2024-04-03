@@ -68,6 +68,7 @@ class ClientSocket:
                 print(f"  {response.data}    ")
                 print("----------------------")
             elif(response.header == "start-round"): self.round_started = True
+            elif(response.header == "end-round"): self.round_started = False
             elif(response.header == "player-tick"): self.player_data = response.data
             elif(response.header == "timer-update"): self.round_timer  = response.data
             elif(response.header == "map-update"): self.map_name = response.data

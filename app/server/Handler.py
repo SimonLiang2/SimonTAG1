@@ -10,6 +10,7 @@ class PacketHandler:
         self.client_id = client_id
         self.packet = packet
         self.timer = timer
+        self.assiged_tagger = False
 
     # Packets recv by server should call this event
     # Function determines proper response during event
@@ -22,7 +23,7 @@ class PacketHandler:
                 response = Packet(source=self.packet.source, header="player-tick", data=self.clients_data)
                 response = response.serialize()
                 self.client_conn.send(response)
-            
+
                 self.round_data = [self.timer.time, self.timer.map]
                 response = Packet(source=self.packet.source, header="update-tick", data=self.round_data)
                 response = response.serialize()
@@ -58,6 +59,13 @@ class PacketHandler:
                                       response = response.serialize()
                                       client.send(response)
                                       break
+            case "get-new-tagger":
+                    players = self.clients_conns.items()
+                    if(len(players) > 1):
+                        it_player = random.choice(list(players))
+                        response = Packet(source="Server", header="youre-it", data=None)
+                        response = response.serialize()
+                        it_player[1].send(response)
             case _: # default case -> packet header is not known
                 print(">> The server just recieved a bad header!")
                 response = Packet(source=self.packet.source, header="bad-header", data="invalid header")

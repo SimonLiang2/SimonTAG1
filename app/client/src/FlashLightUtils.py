@@ -96,7 +96,7 @@ def length(x,y):
         return Math.sqrt((x*x) + (y*y))
 # this number represents how close a player has to be in order to see 
 # a different player with their flashlight
-CAST_SEARCH_LIMIT = 250
+CAST_SEARCH_LIMIT = 150
 class Ray:
     def __init__(self, pos, angle):
         self.pos = pos

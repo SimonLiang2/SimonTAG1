@@ -40,7 +40,7 @@ class Player:
         self.radius = r
         self.max_speed = 3
         self.friction_mag = 0.5
-        self.flash_light = FlashLight(x,y,0.02)
+        self.flash_light = FlashLight(x,y,0.01)
         self.mouseDown = False
         return
     
