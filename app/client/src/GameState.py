@@ -235,8 +235,8 @@ class GameState:
             if(pdata):
                 for key,data in pdata.items():
                     if(key != self.state_machine.client_socket.id):
-                        self.objects.append(NPC(data[0],data[1],5))
-                
+                        self.objects.append(NPC(data[0],data[1],5))    
+            keys = [keys[self.state_machine.keys[0]],keys[self.state_machine.keys[1]],keys[self.state_machine.keys[2]],keys[self.state_machine.keys[3]]]
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y])
         

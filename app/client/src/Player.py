@@ -70,8 +70,7 @@ class Player:
         if(self.mouseDown):
             self.flash_light.update(self.position[0],self.position[1],theta)  
     
-        wasd = [keys[pygame.K_w],keys[pygame.K_a],keys[pygame.K_s],keys[pygame.K_d]]
-        self.process_movement(wasd,map_data,res)
+        self.process_movement(keys,map_data,res)
         self.x = self.position[0]
         self.y = self.position[1]
      
