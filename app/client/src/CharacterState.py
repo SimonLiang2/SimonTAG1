@@ -14,16 +14,6 @@ class CharacterState:
     
     def leave(self):
         print(f"Leaving: {self.name}")
-    
-    # User has selected the play button
-    def volume_up_pressed(self):
-        #time.sleep(0.4)
-        print("VOLUME UP PRESSED")
-
-    # User has selected the credits button
-    def character_pressed(self):
-        #time.sleep(0.4)
-        print("VOLUME DOWN PRESSED")
 
     def render(self,window=None):
         color = (0, 0, 0)
@@ -36,7 +26,7 @@ class CharacterState:
         window.blit(text, text_rect)
 
         font = pygame.font.SysFont('Georgia',self.font_size_button)
-        text = font.render("Color", True, self.color, (255,255,255)) 
+        text = font.render("Color Coming Soon...", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 250) 
         window.blit(text, text_rect)

@@ -1,5 +1,4 @@
 import pygame
-import time
 
 class VolumeState:
     def __init__(self,name,color=(0,0,0)):
@@ -14,16 +13,6 @@ class VolumeState:
     
     def leave(self):
         print(f"Leaving: {self.name}")
-    
-    # User has selected the play button
-    def volume_up_pressed(self):
-        time.sleep(0.4)
-        print("VOLUME UP PRESSED")
-
-    # User has selected the credits button
-    def character_pressed(self):
-        time.sleep(0.4)
-        print("VOLUME DOWN PRESSED")
 
     def render(self,window=None):
         color = (0, 0, 0)
@@ -67,13 +56,13 @@ class VolumeState:
                 #time.sleep(0.5)  # Give the sound time to finish
                 click_pos = pygame.mouse.get_pos()
 
-                print(click_pos)
+                #print(click_pos)
 
                 if (click_pos[0] >= 375 and click_pos[0] <= 625) and (click_pos[1] >= 222 and click_pos[1] <= 278):
-                    print("Volume Up Clicked")
+                    #print("Volume Up Clicked")
                     if(self.state_machine.master_volume < .9):
                         self.state_machine.master_volume += .1
                 elif (current_mouse_pos[0] >= 344 and current_mouse_pos[0] <= 657) and (current_mouse_pos[1] >= 297 and current_mouse_pos[1] <= 353):
-                    print("Volume Down Clicked")
+                    #print("Volume Down Clicked")
                     if(self.state_machine.master_volume > .1):
                         self.state_machine.master_volume -= .1

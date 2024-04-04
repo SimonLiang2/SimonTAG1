@@ -1,5 +1,4 @@
 import pygame
-import time
 
 class SettingsState:
     def __init__(self,name,color=(0,0,0)):
@@ -14,24 +13,6 @@ class SettingsState:
     
     def leave(self):
         print(f"Leaving: {self.name}")
-    
-    # User has selected the play button
-    def sound_pressed(self):
-        time.sleep(0.4)
-        self.state_machine.transition("sound")
-        #print("PLAY PRESSED")
-
-    # User has selected the credits button
-    def character_pressed(self):
-        #time.sleep(0.4)
-        #self.state_machine.transition("character")
-        print("CREDITS PRESSED")
-
-    # User has selected the quit button
-    def binds_pressed(self):
-        #time.sleep(0.4)
-        #self.state_machine.transition("key binds")
-        print("KEY BINDS PRESSED")
 
     def render(self,window=None):
         color = (0, 0, 0)
@@ -75,7 +56,7 @@ class SettingsState:
                 #time.sleep(0.5)  # Give the sound time to finish
                 click_pos = pygame.mouse.get_pos()
 
-                print(click_pos)
+                #print(click_pos)
                 
                 # Check if the click is within the bounds of the buttons and act accordingly
                 if (click_pos[0] >= 428 and click_pos[0] <= 570) and (click_pos[1] >= 219 and click_pos[1] <= 276):
