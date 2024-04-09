@@ -19,7 +19,6 @@ class GameState:
         self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
         self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
         self.bg_music = pygame.mixer.Sound(self.bg_music_path)
-        self.bg_music.set_volume(0.3)
         self.game_timer = None
         self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
         self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
@@ -80,6 +79,7 @@ class GameState:
         self.walls = []
         self.objects = []
         self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
+        self.bg_music.set_volume(0.3 * self.state_machine.master_volume)
         if(self.state_machine.client_socket.inited):
             self.state_machine.client_socket.start_thread()
         else:
@@ -269,6 +269,7 @@ class GameState:
                         self.objects.append(NPC(data[0],data[1],5,col))
                         col = (255,255,255)
 
+                    #fjhkdkdshfkds    
             
             if(self.round_started):
                 if(self.tagged_player != None):
@@ -294,10 +295,13 @@ class GameState:
                         
                         # get distace between tagged player and client player
                         # if distance is less than the both radius client player.tagged = false
-
+            keys = [keys[self.state_machine.keys[0]],keys[self.state_machine.keys[1]],keys[self.state_machine.keys[2]],keys[self.state_machine.keys[3]]]
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y,self.player.tagged])
         
+
+            
+
         elif(self.game_timer.time <= self.state_machine.server_time_end):
             self.reset_map()
             time.sleep(SLEEPTIME * 2)
