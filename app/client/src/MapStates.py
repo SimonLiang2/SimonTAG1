@@ -20,8 +20,7 @@ def get_col(row,col,max_row,max_col):
         return 1
     return get_bin()
 
-def find_spawn_point(map_data, res, square_region=3,curr_x = 0, curr_y = 0):
-    tries = 0
+def find_spawn_point(map_data, res, square_region=3):
     max_rows = len(map_data)
     max_cols = len(map_data[0])
     while True:
@@ -37,9 +36,6 @@ def find_spawn_point(map_data, res, square_region=3,curr_x = 0, curr_y = 0):
                 break 
         if valid_spawn:
             return (col + 1) * res, (row + 1) * res
-        tries += 1
-        if(tries > 5):
-            return (curr_x) , (curr_y)
 
 
 

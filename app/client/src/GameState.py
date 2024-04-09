@@ -214,11 +214,10 @@ class GameState:
             self.state_machine.client_socket.it_flag = False
 
         if(self.state_machine.client_socket.un_it_flag):
-            print("y")
-            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution,3,self.player.x,self.player.y)
+            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution,3)
             self.player = Player(valid_x, valid_y,5)             
             self.player.tagged = False
-            self.state_machine.client_socket.it_flag = False
+            self.state_machine.client_socket.un_it_flag = False
 
         #dont ask...
         self.round_started = self.state_machine.client_socket.round_started
@@ -293,7 +292,7 @@ class GameState:
                             d = math.sqrt(abs(math.pow(player.x-self.player.position[0],2)) + abs(math.pow(player.y-self.player.position[1],2)))
                             if(d<self.player.radius+player.radius):
                                 self.player.tagged = False
-                                valid_x, valid_y = find_spawn_point(self.map, self.box_resolution,3,self.player.x,self.player.y)
+                                valid_x, valid_y = find_spawn_point(self.map, self.box_resolution,3)
                                 self.player = Player(valid_x, valid_y,5)
                         
                         # get distace between tagged player and client player
