@@ -114,10 +114,12 @@ class Player:
             index_x = int((a[0]) / res)
             index_y = int((a[1]) / res)
             
-            on = map[index_y][index_x]
-
-            if(on == WALL):
-                self.position = add(self.position,mult(t,-1))
-                return False
+            try:
+                on = map[index_y][index_x]
+                if(on == WALL):
+                    self.position = add(self.position,mult(t,-1))
+                    return False
+            except:
+                pass
                  
         return True      
