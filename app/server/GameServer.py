@@ -101,6 +101,23 @@ class GameServer:
                     response = Packet(source="server", header="timer-update", data=self.round_data)
                     response = response.serialize()
                     client.send(response)
+                it_player_count = 0
+                for key,client in self.clients_data.items():
+                    if(client[2]):
+                        it_player_count+=1
+                if(it_player_count>1):
+                    for key,client in self.clients_data.items():
+                        if(client[2]):
+                            response = Packet(source="server", header="un-it", data=self.round_data)
+                            response = response.serialize()
+                            self.clients_conns[key].send(response)
+                if(it_player_count <= 0 and self.timer.round_started and self.timer.time > 0):
+                    players = self.clients_conns.items()
+                    it_player = list(players)[0]
+                    print(it_player)
+                    response = Packet(source="Server", header="youre-it2", data=None)
+                    response = response.serialize()
+                    it_player[1].send(response)
                 time.sleep(1)
 
     def run(self):

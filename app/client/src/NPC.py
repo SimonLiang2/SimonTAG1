@@ -3,12 +3,11 @@ from FlashLight import FlashLight
 from MapStates import find_spawn_point;
 
 class NPC:
-    def __init__(self,x,y,r):
+    def __init__(self,x,y,r,col=(255,255,255)):
         self.x = x
         self.y = y
-        self.tagged = False
         self.position = [x,y]
-        self.color = (255,255,255)
+        self.color = col
         self.radius = r
         return
     
@@ -19,9 +18,6 @@ class NPC:
         return
 
     def render(self,window):
-        self.color = (255,255,255)
-        if (self.tagged):
-            self.color = (219,165,255)
         pygame.draw.circle(window, self.color, (self.x,self.y),self.radius,0)
         return
     

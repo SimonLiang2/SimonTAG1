@@ -14,6 +14,8 @@ class ClientSocket:
         self.round_timer = 90
         self.map_name = "map_1"
         self.lobby_full  = False
+        self.it_flag = False
+        self.un_it_flag = False
         try:
             self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket_client.connect((host, port))
@@ -67,9 +69,24 @@ class ClientSocket:
                 print(f"  {response.data}    ")
                 print("----------------------")
             elif(response.header == "start-round"): self.round_started = True
+            elif(response.header == "end-round"): self.round_started = False
             elif(response.header == "player-tick"): self.player_data = response.data
-            elif(response.header == "timer-update"): self.round_timer  = response.data
+            elif(response.header == "update-tick"): 
+                self.round_timer  = response.data[0]
+                self.map_name = response.data[1]
+            elif(response.header == "timer-update"):
+                self.round_timer = response.data
             elif(response.header == "map-update"): self.map_name = response.data
+            elif(response.header == "youre-it"): 
+                self.it_flag = True
+                self.un_it_flag = False
+            elif(response.header == "un-it"): 
+                self.it_flag = False
+                self.un_it_flag = True
+            elif(response.header == "youre-it2"): 
+                print("YOO")
+                self.it_flag = True
+                self.un_it_flag = False
 
         self.kill_connection()
         return 
