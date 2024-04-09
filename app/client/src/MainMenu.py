@@ -52,18 +52,18 @@ class MainMenu:
             # Play music
             pygame.mixer.init()
             pygame.mixer.music.load(self.menu_music_filepath)
-            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.set_volume(0.5 * self.state_machine.master_volume)
             pygame.mixer.music.play(loops=-1)
             
 
             self.button_selected_sound = pygame.mixer.Sound(self.button_select_filepath)
-            self.button_selected_sound.set_volume(0.6)
+            self.button_selected_sound.set_volume(0.6 * self.state_machine.master_volume)
 
             self.enter_sound = pygame.mixer.Sound(self.enter_key_filepath)
-            self.enter_sound.set_volume(1)
+            self.enter_sound.set_volume(1 * self.state_machine.master_volume)
 
             self.quit_sound = pygame.mixer.Sound(self.quit_sound_filepath)
-            self.quit_sound.set_volume(1)
+            self.quit_sound.set_volume(1 * self.state_machine.master_volume)
         except FileNotFoundError as no_file_e:
             print(f"File Not Found Error: {no_file_e}")
         except Exception as exception:
