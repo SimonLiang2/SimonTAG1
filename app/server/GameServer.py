@@ -9,8 +9,8 @@ from ServerTimer import ServerTimer
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
-    def __init__(self, host='127.0.0.1', port=3000, client_max=5, debug=False):
-        self.timer = ServerTimer(time=15)
+    def __init__(self, host='127.0.0.1', port=3000, client_max=5, debug=False, timer_time=15):
+        self.timer = ServerTimer(time=timer_time)
         self.BUFFER_SIZE = 4096
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
@@ -172,7 +172,12 @@ class GameServer:
     def kill(self): self.server.close()
 
 if __name__ == "__main__":
-    server = GameServer(host='127.0.0.1',client_max=5,debug=False)
+    ip = input("What is your IP? (e.g. 127.0.0.1): ")
+    port = int(input("What is your port? (e.g. 3000): "))
+    client_max = int(input("How many clients will be allowed in this session? (e.g. 5): "))
+    timer_time = int(input("How long will the timer run per round? (e.g. 15): "))
+
+    server = GameServer(host=ip,port=port,client_max=client_max,debug=False, timer_time=timer_time)
     server_thread = threading.Thread(target=server.run)
     server_thread.start() 
     server_thread.join() 
