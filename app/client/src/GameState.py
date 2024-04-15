@@ -292,11 +292,7 @@ class GameState:
                             d = math.sqrt(abs(math.pow(player.x-self.player.position[0],2)) + abs(math.pow(player.y-self.player.position[1],2)))
                             if(d<self.player.radius+player.radius):
                                 self.player.tagged = False
-                                valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-                                backaway = 0 
-                                while (backaway <150):
-                                    valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
-                                    backaway = math.sqrt(abs(math.pow(player.x-valid_x,2)) + abs(math.pow(player.y-valid_y,2)))
+                                valid_x, valid_y = find_spawn_point(self.map, self.box_resolution,3)
                                 self.player = Player(valid_x, valid_y,5)
                         
                         # get distace between tagged player and client player
