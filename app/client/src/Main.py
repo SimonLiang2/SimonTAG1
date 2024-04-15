@@ -8,7 +8,7 @@ from SettingsState import SettingsState
 from InfoState import InfoState
 from VolumeState import VolumeState
 from BindsState import BindsState
-from CharacterState import CharacterState
+from HistoricalState import HistoricalState
 import random as r
 
 state_machine = StateMachine()
@@ -19,7 +19,7 @@ credits_state = CreditsState("credits")
 settings_state = SettingsState("settings")
 info_state = InfoState("info")
 volume_state = VolumeState("volume")
-character_state = CharacterState("character")
+historical_state = HistoricalState("historical")
 binds_state = BindsState("binds")
 state_machine.add_state(game_state)
 state_machine.add_state(menu_state)
@@ -28,7 +28,7 @@ state_machine.add_state(settings_state)
 state_machine.add_state(info_state)
 state_machine.add_state(end_state)
 state_machine.add_state(volume_state)
-state_machine.add_state(character_state)
+state_machine.add_state(historical_state)
 state_machine.add_state(binds_state)
 
 state_machine.transition("menu")

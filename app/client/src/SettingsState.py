@@ -32,8 +32,8 @@ class SettingsState:
         text_rect.center = (self.state_machine.window_width/2, 250) 
         window.blit(text, text_rect)
 
-        #Character Button
-        text = font.render("Character", True, self.color, (255,255,255)) 
+        #Historical Stats Button
+        text = font.render("Historical Stats", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 325) 
         window.blit(text, text_rect)
@@ -62,13 +62,15 @@ class SettingsState:
                 if key == pygame.K_ESCAPE:
                     self.state_machine.transition("menu")
             elif event.type == pygame.MOUSEBUTTONDOWN: #If the mouse is clicked
+                print(current_mouse_pos)
+
                 #If mouse is clicked within the text boxes (aka - the buttons)
                 if (current_mouse_pos[0] >= 428 and current_mouse_pos[0] <= 570) and (current_mouse_pos[1] >= 219 and current_mouse_pos[1] <= 276):
                     #When clicked, transition
                     self.state_machine.transition("volume")
-                elif (current_mouse_pos[0] >= 392 and current_mouse_pos[0] <= 608) and (current_mouse_pos[1] >= 297 and current_mouse_pos[1] <= 353):
+                elif (current_mouse_pos[0] >= 330 and current_mouse_pos[0] <= 669) and (current_mouse_pos[1] >= 297 and current_mouse_pos[1] <= 354):
                     #When clicked, transition
-                    self.state_machine.transition("character")
+                    self.state_machine.transition("historical")
                 elif (current_mouse_pos[0] >= 388 and current_mouse_pos[0] <= 612) and (current_mouse_pos[1] >= 371 and current_mouse_pos[1] <= 428):
                     #When clicked, transition
                     self.state_machine.transition("binds")
