@@ -213,6 +213,12 @@ class GameState:
             self.player.tagged = True
             self.state_machine.client_socket.it_flag = False
 
+        if(self.state_machine.client_socket.un_it_flag):
+            valid_x, valid_y = find_spawn_point(self.map, self.box_resolution,3)
+            self.player = Player(valid_x, valid_y,5)             
+            self.player.tagged = False
+            self.state_machine.client_socket.un_it_flag = False
+
         #dont ask...
         self.round_started = self.state_machine.client_socket.round_started
         self.state_machine.client_socket.round_started

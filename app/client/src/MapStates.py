@@ -37,6 +37,8 @@ def find_spawn_point(map_data, res, square_region=3):
         if valid_spawn:
             return (col + 1) * res, (row + 1) * res
 
+
+
 def gen_map(res,width,height):
     rows = int(height/res)
     cols = int(width/res)
