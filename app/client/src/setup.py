@@ -4,7 +4,8 @@ options = {
     'build_exe': {
         'include_files': [
             ('assets/music', 'assets/music/'),
-            ('assets/images', 'assets/images/')
+            ('assets/images', 'assets/images/'),
+            ('maps.json', 'maps.json')
         ]
     }
 }
