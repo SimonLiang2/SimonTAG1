@@ -9,19 +9,15 @@ from MapStates import gen_map, find_spawn_point;
 from CreateMaps import choose_random_map, choose_map, get_last_map
 from GameTimer import GameTimer
 from ClientSocket import ClientSocket
-
+import os
 
 SLEEPTIME = 0.1
 class GameState:
     def __init__(self,name):
         pygame.mixer.init()
-        self.bg_music_path = 'app/client/src/assets/music/gamemusic.mp3'
-        self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
-        self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
-        self.bg_music = pygame.mixer.Sound(self.bg_music_path)
+        self.bg_music_path = 'assets/music/gamemusic.mp3'
+        self.flashlight_sound_path ='assets/music/flashlight.mp3'
         self.game_timer = None
-        self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
-        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
         self.name = name
         self.state_machine = None
         self.player = None
@@ -49,8 +45,6 @@ class GameState:
 
     def reset_map(self):
         if(not self.reset_once):
-            pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
-
             self.state_machine.client_socket.send_data("map-req")
             time.sleep(SLEEPTIME)    
             self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
@@ -76,6 +70,9 @@ class GameState:
 
 
     def enter(self):
+        pygame.mixer.init()
+        self.bg_music = pygame.mixer.Sound(self.bg_music_path)
+        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
         self.walls = []
         self.objects = []
         self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)

@@ -10,6 +10,8 @@ from VolumeState import VolumeState
 from BindsState import BindsState
 from CharacterState import CharacterState
 import random as r
+import os
+print("CURRENT WORKING DIRECTORY:", os.getcwd())
 
 state_machine = StateMachine()
 game_state = GameState("game")
