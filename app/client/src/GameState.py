@@ -35,6 +35,7 @@ class GameState:
         self.objects = []
         self.round_started = False
         self.tagged_player = None
+        
     
     def check_it(self):
         if(not self.check_it_once and self.state_machine.client_socket.admin):
@@ -67,15 +68,9 @@ class GameState:
 
 
     def enter(self):
-        pygame.mixer.quit()
-        pygame.mixer.init()
-        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
-        self.bg_music = pygame.mixer.Sound(self.bg_music_path)
-
         self.walls = []
         self.objects = []
         self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
-        self.bg_music.set_volume(0.3 * self.state_machine.master_volume)
         if(self.state_machine.client_socket.inited):
             self.state_machine.client_socket.start_thread()
         else:
@@ -84,7 +79,6 @@ class GameState:
         self.state_machine.player_score = 0
 
         self.game_timer = GameTimer((100,200),color=(255,255,255))
-        pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
         
         self.state_machine.client_socket.send_data("map-req")
         time.sleep(SLEEPTIME)    
@@ -97,6 +91,15 @@ class GameState:
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.gen_boundaries()
         self.draw_map()
+
+        try:
+            pygame.mixer.music.load(self.bg_music_path)
+            pygame.mixer.music.set_volume(0.3 * self.state_machine.master_volume)
+            pygame.mixer.music.play(loops=-1)
+
+            self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
+        except Exception as e:
+            print(f"FILE EXCEPTION:{e}")
     
     def leave(self):
         # make sure this socket dies
@@ -107,10 +110,9 @@ class GameState:
         self.state_machine.client_socket.send_data("kill-socket")
         time.sleep(SLEEPTIME)  
 
-        pygame.mixer.Channel(0).stop()
-        pygame.mixer.Channel(1).stop()
         self.walls = []
         self.objects = []
+        pygame.mixer.stop()
     
     def get_val_from_map(self,x,y):
         x = int(x)
@@ -169,7 +171,6 @@ class GameState:
                  self.map_img.fill(col,(j*res,i*res,res,res)) 
 
     def render(self,window=None):
-        res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
         text_msg = "Waiting To Start Match."
@@ -248,7 +249,10 @@ class GameState:
                 if event.type == pygame.QUIT:
                     self.state_machine.window_should_close = True
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
+                    try:
+                        self.flashlight_sound.play()
+                    except Exception as e:
+                        print(f"Can not play flashlight sound: {e}")
 
             pdata = self.state_machine.client_socket.player_data
             col = (255,255,255)
@@ -264,8 +268,6 @@ class GameState:
                         self.objects.append(NPC(data[0],data[1],5,col))
                         col = (255,255,255)
 
-                    #fjhkdkdshfkds    
-            
             if(self.round_started):
                 if(self.tagged_player != None):
                     d = math.sqrt(abs(math.pow(self.tagged_player[0]-self.player.x,2)) + abs(math.pow(self.tagged_player[1]-self.player.y,2)))
@@ -290,9 +292,6 @@ class GameState:
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y,self.player.tagged])
         
-
-            
-
         elif(self.game_timer.time <= self.state_machine.server_time_end):
             self.reset_map()
             time.sleep(SLEEPTIME * 2)
