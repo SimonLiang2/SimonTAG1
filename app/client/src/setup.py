@@ -7,7 +7,7 @@ options = {
             ('assets/images', 'assets/images/'),
             ('maps.json', 'maps.json')
         ]
-        ,'build_exe': 'build1' #uncomment to change name
+        #,'build_exe': 'build1' uncomment to change name
     }
 }
 
