@@ -8,7 +8,8 @@ from SettingsState import SettingsState
 from InfoState import InfoState
 from VolumeState import VolumeState
 from BindsState import BindsState
-from CharacterState import CharacterState
+from HistoricalState import HistoricalState
+from ServerConfigState import ServerConfigState
 import random as r
 import os
 print("CURRENT WORKING DIRECTORY:", os.getcwd())
@@ -21,8 +22,9 @@ credits_state = CreditsState("credits")
 settings_state = SettingsState("settings")
 info_state = InfoState("info")
 volume_state = VolumeState("volume")
-character_state = CharacterState("character")
+historical_state = HistoricalState("historical")
 binds_state = BindsState("binds")
+server_config_state = ServerConfigState("configuration")
 state_machine.add_state(game_state)
 state_machine.add_state(menu_state)
 state_machine.add_state(credits_state)
@@ -30,8 +32,9 @@ state_machine.add_state(settings_state)
 state_machine.add_state(info_state)
 state_machine.add_state(end_state)
 state_machine.add_state(volume_state)
-state_machine.add_state(character_state)
+state_machine.add_state(historical_state)
 state_machine.add_state(binds_state)
+state_machine.add_state(server_config_state)
 
 state_machine.transition("menu")
 

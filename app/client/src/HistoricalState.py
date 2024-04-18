@@ -1,7 +1,6 @@
 import pygame
-import time
 
-class CharacterState:
+class HistoricalState:
     def __init__(self,name,color=(0,0,0)):
         self.name = name
         self.state_machine = None
@@ -21,16 +20,23 @@ class CharacterState:
 
         #Title
         font = pygame.font.SysFont('Georgia',self.font_size_title)
-        text = font.render("CUSTOMIZE CHARACTER", True, self.color, (255,255,255)) 
+        text = font.render("HISTORICAL STATS", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, self.state_machine.window_height//6) 
         window.blit(text, text_rect)
 
-        #Ghost Button For Character changes ... Coming Soon
+        #Games Won Text
         font = pygame.font.SysFont('Georgia',self.font_size_button)
-        text = font.render("Color Coming Soon...", True, self.color, (255,255,255)) 
+        text = font.render((f"Games Won: {round(435)}"), True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 250) 
+        window.blit(text, text_rect)
+
+        #Games Played Text
+        font = pygame.font.SysFont('Georgia',self.font_size_button)
+        text = font.render((f"Games Played: {round(10)}"), True, self.color, (255,255,255)) 
+        text_rect = text.get_rect()
+        text_rect.center = (self.state_machine.window_width/2, 325) 
         window.blit(text, text_rect)
 
         #ESC Text
