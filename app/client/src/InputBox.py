@@ -6,7 +6,7 @@ BLACK = (0, 0, 0)
 GRAY = (75,75,75)
 
 class InputBox:
-    def __init__(self, x, y, width, height, text = '', is_port = False):
+    def __init__(self, x, y, width, height, max_char, text = ''):
         self.rect = pygame.Rect(x, y, width, height)
         self.x = x
         self.y = y
@@ -16,7 +16,7 @@ class InputBox:
         self.text = text
         self.font = pygame.font.Font(None, 32)
         self.active = False
-        self.is_port = is_port
+        self.max_char = max_char
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -35,10 +35,7 @@ class InputBox:
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 else:
-                    if(len(self.text) <= 15 and self.is_port == False):
-                        self.text += event.unicode
-
-                    if(len(self.text) <= 4 and self.is_port == False):
+                    if(len(self.text) < self.max_char):
                         self.text += event.unicode
 
     def draw(self, screen):

@@ -12,9 +12,8 @@ class ServerConfigState:
         self.port = 3000
         self.text__tp1 = ''
         self.text__tp2 = ''
-        self.max_characters = 16
-        self.input_box_ip = InputBox(475,202,275,46,self.text__tp1,False)
-        self.input_box_port = InputBox(475,257,275,46,self.text__tp2,True)
+        self.input_box_ip = InputBox(475,202,275,46,15,self.text__tp1)
+        self.input_box_port = InputBox(475,257,275,46,5,self.text__tp2)
 
     def enter(self):
         print(f"Entering: {self.name}")
@@ -57,7 +56,8 @@ class ServerConfigState:
         self.input_box_port.draw(self.state_machine.window)
 
         #Current IP/Port Text
-        text = font.render((f"Current: '{self.ip_address}:{self.port}'"), True, self.color, (255,255,255)) 
+        if self.port != -1: text = font.render((f"Current: {self.ip_address}:{self.port}"), True, self.color, (255,255,255)) 
+        else: text = font.render("INVALID: Port must be a number!", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 345) 
         window.blit(text, text_rect)
@@ -93,5 +93,9 @@ class ServerConfigState:
                 if (current_mouse_pos[0] >= 805 and current_mouse_pos[0] <= 904) and (current_mouse_pos[1] >= 227 and current_mouse_pos[1] <= 274):
                     #When clicked, change the current IP Address and Port to the given values in the input boxes
                     print("Clicked Enter")
-                    self.ip_address = self.text__tp1
-                    self.port = int(self.text__tp2)
+                    self.ip_address = self.input_box_ip.text
+                    try: self.port = int(self.input_box_port.text)
+                    except Exception as e: 
+                        print(f"bad int: {e}")
+                        self.port = -1
+                    print(f"{self.ip_address}:{self.port}")
