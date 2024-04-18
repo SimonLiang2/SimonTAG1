@@ -9,6 +9,7 @@ from InfoState import InfoState
 from VolumeState import VolumeState
 from BindsState import BindsState
 from HistoricalState import HistoricalState
+from ServerConfigState import ServerConfigState
 import random as r
 
 state_machine = StateMachine()
@@ -21,6 +22,7 @@ info_state = InfoState("info")
 volume_state = VolumeState("volume")
 historical_state = HistoricalState("historical")
 binds_state = BindsState("binds")
+server_config_state = ServerConfigState("configuration")
 state_machine.add_state(game_state)
 state_machine.add_state(menu_state)
 state_machine.add_state(credits_state)
@@ -30,6 +32,7 @@ state_machine.add_state(end_state)
 state_machine.add_state(volume_state)
 state_machine.add_state(historical_state)
 state_machine.add_state(binds_state)
+state_machine.add_state(server_config_state)
 
 state_machine.transition("menu")
 

@@ -44,6 +44,12 @@ class SettingsState:
         text_rect.center = (self.state_machine.window_width/2, 400) 
         window.blit(text, text_rect)
 
+        #Server Configuration Button
+        text = font.render("Server Config", True, self.color, (255,255,255)) 
+        text_rect = text.get_rect()
+        text_rect.center = (self.state_machine.window_width/2, 475) 
+        window.blit(text, text_rect)
+
         #ESC Text
         font = pygame.font.SysFont('Georgia',30)
         text = font.render(("Press ESC to go back."), True, self.color, (255,255,255)) 
@@ -62,8 +68,6 @@ class SettingsState:
                 if key == pygame.K_ESCAPE:
                     self.state_machine.transition("menu")
             elif event.type == pygame.MOUSEBUTTONDOWN: #If the mouse is clicked
-                print(current_mouse_pos)
-
                 #If mouse is clicked within the text boxes (aka - the buttons)
                 if (current_mouse_pos[0] >= 428 and current_mouse_pos[0] <= 570) and (current_mouse_pos[1] >= 219 and current_mouse_pos[1] <= 276):
                     #When clicked, transition
@@ -74,3 +78,6 @@ class SettingsState:
                 elif (current_mouse_pos[0] >= 388 and current_mouse_pos[0] <= 612) and (current_mouse_pos[1] >= 371 and current_mouse_pos[1] <= 428):
                     #When clicked, transition
                     self.state_machine.transition("binds")
+                elif (current_mouse_pos[0] >= 352 and current_mouse_pos[0] <= 648) and (current_mouse_pos[1] >= 447 and current_mouse_pos[1] <= 503):
+                    #When clicked, transition
+                    self.state_machine.transition("configuration")
