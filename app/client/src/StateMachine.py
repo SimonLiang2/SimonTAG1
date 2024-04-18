@@ -14,6 +14,7 @@ class StateMachine:
         self.client_socket = None
         self.msg = None
         self.ip_address = '127.0.0.1'
+        self.port = 3000
         self.window = pygame.display.set_mode((self.window_width, self.window_height))
         self.master_volume = 0.50
         self.keys = [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]

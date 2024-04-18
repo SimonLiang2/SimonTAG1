@@ -56,7 +56,7 @@ class ServerConfigState:
         self.input_box_port.draw(self.state_machine.window)
 
         #Current IP/Port Text
-        if self.port != -1: text = font.render((f"Current: {self.ip_address}:{self.port}"), True, self.color, (255,255,255)) 
+        if self.port != -1: text = font.render((f"Current: {self.state_machine.ip_address}:{self.state_machine.port}"), True, self.color, (255,255,255)) 
         else: text = font.render("INVALID: Port must be a number!", True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 345) 
@@ -99,3 +99,5 @@ class ServerConfigState:
                         print(f"bad int: {e}")
                         self.port = -1
                     print(f"{self.ip_address}:{self.port}")
+                    self.state_machine.ip_address = self.ip_address
+                    self.state_machine.port = self.port

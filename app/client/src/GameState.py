@@ -70,7 +70,7 @@ class GameState:
     def enter(self):
         self.walls = []
         self.objects = []
-        self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
+        self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address, self.state_machine.port)
         if(self.state_machine.client_socket.inited):
             self.state_machine.client_socket.start_thread()
         else:
