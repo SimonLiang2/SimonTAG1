@@ -16,15 +16,15 @@ class MainMenu:
         self.window_color = (0, 0, 0)
 
         # Audio filepaths
-        self.menu_music_filepath = 'app/client/src/assets/music/menu.mp3'
-        self.button_select_filepath = 'app/client/src/assets/music/button-select.mp3'
-        self.enter_key_filepath = 'app/client/src/assets/music/enter-key.mp3'
-        self.quit_sound_filepath = 'app/client/src/assets/music/quit.mp3'
+        self.menu_music_filepath = 'assets/music/menu.mp3'
+        self.button_select_filepath = 'assets/music/button-select.mp3'
+        self.enter_key_filepath = 'assets/music/enter-key.mp3'
+        self.quit_sound_filepath = 'assets/music/quit.mp3'
 
         # Button filepaths
-        play_filepath = 'app/client/src/assets/images/play.png'
-        credits_filepath = 'app/client/src/assets/images/credits.png'
-        quit_filepath = 'app/client/src/assets/images/quit.png'
+        play_filepath = 'assets/images/play.png'
+        credits_filepath = 'assets/images/credits.png'
+        quit_filepath = 'assets/images/quit.png'
 
         # Instantiate buttons
         button_scale = .45
@@ -35,15 +35,15 @@ class MainMenu:
         # Keep track of all the buttons publicly using a list
         self.buttons = [self.play_button, self.credits_button, self.quit_button]
 
-        logo_path = 'app/client/src/assets/images/logo.png'
+        logo_path = 'assets/images/logo.png'
         self.logo = self.create_image(logo_path, rescale=.5)
 
-        self.settings_inverted_path = 'app/client/src/assets/images/settings-inverted.png'
-        self.settings_path = 'app/client/src/assets/images/settings.png'
+        self.settings_inverted_path = 'assets/images/settings-inverted.png'
+        self.settings_path = 'assets/images/settings.png'
         self.settings = self.create_image(self.settings_path, rescale=.4)
 
-        self.info_path = 'app/client/src/assets/images/infoicon.png'
-        self.info_path_inverted = 'app/client/src/assets/images/infoicon-inverted.png'
+        self.info_path = 'assets/images/infoicon.png'
+        self.info_path_inverted = 'assets/images/infoicon-inverted.png'
         self.info = self.create_image(self.info_path, rescale=0.3)
     
     def enter(self):
@@ -79,6 +79,7 @@ class MainMenu:
     def play_pressed(self):
         time.sleep(0.4)
         self.state_machine.transition("game")
+        pygame.mixer.stop()
         #pygame.mixer.music.stop()
         #print("PLAY PRESSED")
 

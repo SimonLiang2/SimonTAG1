@@ -9,19 +9,14 @@ from MapStates import gen_map, find_spawn_point;
 from CreateMaps import choose_random_map, choose_map, get_last_map
 from GameTimer import GameTimer
 from ClientSocket import ClientSocket
-
+import os
 
 SLEEPTIME = 0.1
 class GameState:
     def __init__(self,name):
-        pygame.mixer.init()
-        self.bg_music_path = 'app/client/src/assets/music/gamemusic.mp3'
-        self.ding_sound_path = 'app/client/src/assets/music/ding.mp3'
-        self.flashlight_sound_path = 'app/client/src/assets/music/flashlight.mp3'
-        self.bg_music = pygame.mixer.Sound(self.bg_music_path)
+        self.bg_music_path = 'assets/music/gamemusic.mp3'
+        self.flashlight_sound_path = 'assets/music/flashlight.mp3'
         self.game_timer = None
-        self.ding_sound = pygame.mixer.Sound(self.ding_sound_path)
-        self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
         self.name = name
         self.state_machine = None
         self.player = None
@@ -40,7 +35,7 @@ class GameState:
         self.objects = []
         self.round_started = False
         self.tagged_player = None
-        return
+        
     
     def check_it(self):
         if(not self.check_it_once and self.state_machine.client_socket.admin):
@@ -49,8 +44,6 @@ class GameState:
 
     def reset_map(self):
         if(not self.reset_once):
-            pygame.mixer.Channel(1).play(self.ding_sound,fade_ms=100)
-
             self.state_machine.client_socket.send_data("map-req")
             time.sleep(SLEEPTIME)    
             self.map = choose_map("maps.json",self.state_machine.client_socket.map_name)
@@ -72,24 +65,20 @@ class GameState:
             self.draw_map()
             self.players_in_game = 0
             self.reset_once = True
-        return
 
 
     def enter(self):
         self.walls = []
         self.objects = []
         self.state_machine.client_socket = ClientSocket(self.state_machine.ip_address)
-        self.bg_music.set_volume(0.3 * self.state_machine.master_volume)
         if(self.state_machine.client_socket.inited):
             self.state_machine.client_socket.start_thread()
         else:
             self.state_machine.transition("message","Failed To Connect to Server")
 
-        pygame.mixer.music.stop()
         self.state_machine.player_score = 0
 
         self.game_timer = GameTimer((100,200),color=(255,255,255))
-        pygame.mixer.Channel(0).play(self.bg_music,loops=-1)
         
         self.state_machine.client_socket.send_data("map-req")
         time.sleep(SLEEPTIME)    
@@ -102,7 +91,15 @@ class GameState:
         valid_x, valid_y = find_spawn_point(self.map, self.box_resolution)
         self.gen_boundaries()
         self.draw_map()
-        return
+
+        try:
+            pygame.mixer.music.load(self.bg_music_path)
+            pygame.mixer.music.set_volume(0.3 * self.state_machine.master_volume)
+            pygame.mixer.music.play(loops=-1)
+
+            self.flashlight_sound = pygame.mixer.Sound(self.flashlight_sound_path)
+        except Exception as e:
+            print(f"FILE EXCEPTION:{e}")
     
     def leave(self):
         # make sure this socket dies
@@ -113,18 +110,15 @@ class GameState:
         self.state_machine.client_socket.send_data("kill-socket")
         time.sleep(SLEEPTIME)  
 
-        pygame.mixer.Channel(0).stop()
-        pygame.mixer.Channel(1).stop()
         self.walls = []
         self.objects = []
-        return
+        pygame.mixer.stop()
     
     def get_val_from_map(self,x,y):
         x = int(x)
         y = int(y)
         if((0 <= x and x <= len(self.map[0])-1) and (0 <= y and y <= len(self.map)-1)):
             return self.map[y][x]
-        return None
     
     def gen_lines(self, x_offset, y_offset, x_check, y_check):
         res = self.box_resolution
@@ -165,7 +159,6 @@ class GameState:
         self.gen_lines(0, 0, -1, 0)
         self.gen_lines(0, self.box_resolution, 0, 1)
         self.gen_lines(0, 0, 0, -1)
-        return
            
     def draw_map(self):
         res  = self.box_resolution
@@ -176,10 +169,8 @@ class GameState:
                  if(self.map[i][j] == 1):
                      col = (255,255,255)
                  self.map_img.fill(col,(j*res,i*res,res,res)) 
-        return
 
     def render(self,window=None):
-        res  = self.box_resolution
         background_color = (0, 0, 0)
         window.fill(background_color)
         text_msg = "Waiting To Start Match."
@@ -206,7 +197,6 @@ class GameState:
                 wall.render(window)
             for obj in self.objects:
                 obj.render(window)
-        return
 
     def update(self):
         if(self.state_machine.client_socket.it_flag):
@@ -259,7 +249,10 @@ class GameState:
                 if event.type == pygame.QUIT:
                     self.state_machine.window_should_close = True
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    pygame.mixer.Channel(1).play(self.flashlight_sound,fade_ms=100)
+                    try:
+                        self.flashlight_sound.play()
+                    except Exception as e:
+                        print(f"Can not play flashlight sound: {e}")
 
             pdata = self.state_machine.client_socket.player_data
             col = (255,255,255)
@@ -275,8 +268,6 @@ class GameState:
                         self.objects.append(NPC(data[0],data[1],5,col))
                         col = (255,255,255)
 
-                    #fjhkdkdshfkds    
-            
             if(self.round_started):
                 if(self.tagged_player != None):
                     d = math.sqrt(abs(math.pow(self.tagged_player[0]-self.player.x,2)) + abs(math.pow(self.tagged_player[1]-self.player.y,2)))
@@ -301,9 +292,6 @@ class GameState:
             self.player.update(keys,(self.mouseX,self.mouseY,self.mouseB),self.map,self.box_resolution,self.objects) 
             self.state_machine.client_socket.send_data("player-tick",[self.player.x,self.player.y,self.player.tagged])
         
-
-            
-
         elif(self.game_timer.time <= self.state_machine.server_time_end):
             self.reset_map()
             time.sleep(SLEEPTIME * 2)
@@ -311,4 +299,3 @@ class GameState:
        
         
         self.clock.tick(60)  
-        return
