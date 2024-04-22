@@ -105,7 +105,7 @@ class GameState:
         if(self.round_started):
             self.state_machine.game_stats[1] = self.state_machine.game_stats[1] + 1
 
-        f = open("app\\client\\src\\stats.txt","w")
+        f = open("stats.txt","w")
         f.write(f"{self.state_machine.game_stats[0]}\n{self.state_machine.game_stats[1]}")
         f.close()
         # make sure this socket dies

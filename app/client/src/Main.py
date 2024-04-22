@@ -12,7 +12,6 @@ from HistoricalState import HistoricalState
 from ServerConfigState import ServerConfigState
 import random as r
 import os
-print("CURRENT WORKING DIRECTORY:", os.getcwd())
 
 state_machine = StateMachine()
 game_state = GameState("game")

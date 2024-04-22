@@ -21,7 +21,7 @@ class StateMachine:
         self.game_stats = [0,0]
         pygame.display.set_caption("Tag Game")
         try:
-            with open("app\\client\\src\\stats.txt", "r") as txt_file:
+            with open("stats.txt", "r") as txt_file:
                     self.game_stats = txt_file.readlines()
             self.game_stats[0] = int(self.game_stats[0])  
             self.game_stats[1] = int(self.game_stats[1])   

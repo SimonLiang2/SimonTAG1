@@ -5,7 +5,8 @@ options = {
         'include_files': [
             ('assets/music', 'assets/music/'),
             ('assets/images', 'assets/images/'),
-            ('maps.json', 'maps.json')
+            ('maps.json', 'maps.json'),
+            ('stats.txt', 'stats.txt')
         ]
         #,'build_exe': 'build1' uncomment to change name
     }
