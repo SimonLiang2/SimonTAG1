@@ -16,10 +16,10 @@ class ServerConfigState:
         self.input_box_port = InputBox(475,257,275,46,5,self.text__tp2)
 
     def enter(self):
-        print(f"Entering: {self.name}")
+        pass
     
     def leave(self):
-        print(f"Leaving: {self.name}")
+        pass
     
     def draw_text(self, surface, text, color, x, y):
         text_surface = self.font_size_button.render(text, True, color)

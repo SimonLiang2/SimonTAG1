@@ -9,10 +9,10 @@ class SettingsState:
         self.font_size_title = 80
     
     def enter(self):
-        print(f"Entering: {self.name}")
+        pass
     
     def leave(self):
-        print(f"Leaving: {self.name}")
+        pass
 
     def render(self,window=None):
         color = (0, 0, 0)
