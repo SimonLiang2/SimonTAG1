@@ -7,12 +7,16 @@ class HistoricalState:
         self.color = color
         self.font_size_button = 45
         self.font_size_title = 70
+        self.games_won = 0
+        self.games_played = 0
     
     def enter(self):
-        print(f"Entering: {self.name}")
+        self.games_won = self.state_machine.game_stats[0]
+        self.games_played = self.state_machine.game_stats[1]
+
     
     def leave(self):
-        print(f"Leaving: {self.name}")
+        pass
 
     def render(self,window=None):
         color = (0, 0, 0)
@@ -27,14 +31,14 @@ class HistoricalState:
 
         #Games Won Text
         font = pygame.font.SysFont('Georgia',self.font_size_button)
-        text = font.render((f"Games Won: {round(435)}"), True, self.color, (255,255,255)) 
+        text = font.render((f"Games Won: {round(self.games_won)}"), True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 250) 
         window.blit(text, text_rect)
 
         #Games Played Text
         font = pygame.font.SysFont('Georgia',self.font_size_button)
-        text = font.render((f"Games Played: {round(10)}"), True, self.color, (255,255,255)) 
+        text = font.render((f"Games Played: {round(self.games_played)}"), True, self.color, (255,255,255)) 
         text_rect = text.get_rect()
         text_rect.center = (self.state_machine.window_width/2, 325) 
         window.blit(text, text_rect)

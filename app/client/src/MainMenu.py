@@ -68,12 +68,9 @@ class MainMenu:
             print(f"File Not Found Error: {no_file_e}")
         except Exception as exception:
             print(f"Exception caught: {exception}")
-
-        print(f"Entering: {self.name}")
     
     def leave(self):
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-        print(f"Leaving: {self.name}")
     
     # User has selected the play button
     def play_pressed(self):

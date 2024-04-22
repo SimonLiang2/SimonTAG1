@@ -17,7 +17,15 @@ class StateMachine:
         self.window = pygame.display.set_mode((self.window_width, self.window_height))
         self.master_volume = 0.50
         self.keys = [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]
+        self.game_stats = [0,0]
         pygame.display.set_caption("Tag Game")
+        try:
+            with open("app\\client\\src\\stats.txt", "r") as txt_file:
+                    self.game_stats = txt_file.readlines()
+            self.game_stats[0] = int(self.game_stats[0])  
+            self.game_stats[1] = int(self.game_stats[1])   
+        except:
+            self.game_stats = [0,0]
         return
 
     def add_state(self,state):

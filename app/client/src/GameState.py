@@ -105,6 +105,12 @@ class GameState:
         return
     
     def leave(self):
+        if(self.round_started):
+            self.state_machine.game_stats[1] = self.state_machine.game_stats[1] + 1
+
+        f = open("app\\client\\src\\stats.txt","w")
+        f.write(f"{self.state_machine.game_stats[0]}\n{self.state_machine.game_stats[1]}")
+        f.close()
         # make sure this socket dies
         if(self.state_machine.client_socket.admin):
             self.state_machine.client_socket.send_data("get-admin")
@@ -266,6 +272,7 @@ class GameState:
             if(pdata):
                 self.players_in_game = len(pdata.items())
                 if(self.players_in_game == 1 and self.round_started):
+                    self.state_machine.game_stats[0] = self.state_machine.game_stats[0] + 1
                     self.state_machine.transition("message","YOU WIN YOURE AWESOME")
                 for key,data in pdata.items():
                     if(key != self.state_machine.client_socket.id):
